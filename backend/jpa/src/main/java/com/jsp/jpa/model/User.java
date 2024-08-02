@@ -7,48 +7,37 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "user")
+@Entity(name = "member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UserIDX")
+    @Column(name = "member_idx")
     private int userIDX;
 
-    @Column(name = "userID")
-    private String userID;
-
-    @Column(name = "UserName")
-    private String userName;
-
-    @Column(name = "UserTel")
-    private int userTel;
-
-    @Column(name = "userLevel")
-    private String userLevel;
-
-    @Column(name = "UserEmail")
+    @Column(name = "member_email")
     private String userEmail; // Principal
 
-    @Column(name = "userPW")
+    @Column(name = "member_pwd")
     private String userPW; // Credential
 
+    @Column(name = "member_provider")
+    private String provider;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "UserRole")
+    @Column(name = "member_role")
     private Role role; // 사용자 권한
 
     // == 생성 메서드 == //
     public static User registerUser(AuthDto.SignupDto signupDto) {
         User user = new User();
 
-        user.userID = signupDto.getId();
         user.userEmail = signupDto.getEmail();
         user.userPW = signupDto.getPassword();
         user.role = Role.USER;
-        user.userName = signupDto.getName();
-        user.userTel = signupDto.getTel();
+
         return user;
     }
 }

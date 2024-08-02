@@ -13,15 +13,15 @@ public class AuthDto {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class LoginDto {
-        private String id;
+        private String email;
         private String password;
 
         @Builder
         /**
          * 로그인할 때 필요하다
          */
-        public LoginDto(String id, String password) {
-            this.id = id;
+        public LoginDto(String email, String password) {
+            this.email = email;
             this.password = password;
         }
     }
@@ -32,16 +32,10 @@ public class AuthDto {
      * 회원가입할 때 필요하다
      */
     public static class SignupDto {
-        private String id;
-        private String name;
-        private int tel;
         private String email;
         private String password;
         @Builder
-        public SignupDto(String id, String name, String email, String password, int tel) {
-            this.id = id;
-            this.name = name;
-            this.tel = tel;
+        public SignupDto(String email, String password) {
             this.email = email;
             this.password = password;
         }
