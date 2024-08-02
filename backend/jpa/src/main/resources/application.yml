@@ -18,7 +18,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://mydb.c72ss0somxra.ap-northeast-2.rds.amazonaws.com:3306/movie?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+      jdbc-url: jdbc:mysql://mydb.c72ss0somxra.ap-northeast-2.rds.amazonaws.com:3306/blog?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
       username: my_user
       password: bora931105
   jpa:
