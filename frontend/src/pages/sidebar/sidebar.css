@@ -1,12 +1,12 @@
-/* Main.css */
+/* sidebar.css */
 body, html {
     height: 100%;
     margin: 0;
 }
 
 .container {
-    display: flex;
-    height: 100vh; /* 전체 화면 높이를 차지 */
+    display: inline;
+    height: 100vh; 
 }
 
 .sidebar {
@@ -17,6 +17,9 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    position: fixed; 
+    height: 100vh; 
+    overflow-y: auto; 
 }
 
 .sidebar p {
@@ -25,11 +28,6 @@ body, html {
     font-weight: bold;
 }
 
-.main-content {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #f8f9fa;
-}
 
 nav a {
     display: block;
