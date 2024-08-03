@@ -4,13 +4,15 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { Provider, useDispatch } from 'react-redux';
 import Login from './pages/user/login';
 import Signup from './pages/user/signup';
-import Home from './pages/home';
 
 import PrivateRoute from './component/privateRoute';
 import { clearUser, initializeUser } from './store/authSlice';
 import MyPage from './pages/user/mypage';
 import axios from 'axios';
 import { validateToken } from './api/auth';
+import Main from './pages/sidebar/sidebar';
+import Movie from './pages/movie/movie';
+import SideBar from './pages/sidebar/sidebar';
 
 
 function App() {
@@ -39,10 +41,12 @@ function App() {
 
   return (
       <Router>
+         <SideBar/>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/movie" element={<Movie />} />
+         
           <Route 
             path='/api/mypage/info' 
             element={

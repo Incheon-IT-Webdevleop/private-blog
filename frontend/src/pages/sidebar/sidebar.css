@@ -1,0 +1,50 @@
+/* Main.css */
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh; /* 전체 화면 높이를 차지 */
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sidebar p {
+    margin: 0 0 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+nav a {
+    display: block;
+    padding: 10px 0;
+    text-decoration: none;
+    color: white;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+nav a.active-link {
+    font-weight: bold;
+    color: #007bff;
+}
+
+nav a:hover {
+    color: #adb5bd;
+}
