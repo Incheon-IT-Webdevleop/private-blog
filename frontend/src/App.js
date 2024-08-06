@@ -13,6 +13,7 @@ import { validateToken } from './api/auth';
 import Main from './pages/sidebar/sidebar';
 import Movie from './pages/movie/movie';
 import SideBar from './pages/sidebar/sidebar';
+import Review from './pages/movie/review';
 
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/movie" element={<Movie />} />
+          <Route path="/review" element={<Review />} />
          
           <Route 
             path='/api/mypage/info' 
