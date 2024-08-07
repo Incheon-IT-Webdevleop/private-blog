@@ -1,74 +1,128 @@
 .review-container {
     padding: 20px;
-    margin-left: 300px; /* SideBar의 너비만큼 여백 */
-    padding: 0;
-    width: 60%;
-    padding: 20px;
+    margin-left: 300px;
+    width: 80%;
+    max-width: 1000px;
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
 
-
 h1 {
     text-align: center;
     color: #333;
+    margin-bottom: 30px;
 }
 
-.review-form {
+.review-layout {
     display: flex;
-    flex-direction: column;
+    gap: 30px;
 }
 
-.form-group {
+.editor-section, .preview-section {
+    flex: 1;
+}
+
+.title-input {
+    width: 100%;
+    font-size: 1.5em;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.content-editor {
+    height: 400px;
     margin-bottom: 20px;
 }
 
-.form-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    display: block;
+.image-upload {
+    margin-bottom: 20px;
 }
 
-.form-control {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+.file-input {
+    display: none;
+}
+
+.upload-button {
+    background-color: #00c73c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
     border-radius: 5px;
-    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 20px;
+    display: inline-block;
 }
 
-.form-control:focus {
-    outline: none;
-    border-color: #007bff;
+.upload-button:hover {
+    background-color: #00a32c;
 }
 
 .submit-button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #00c73c;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    width: 100%;
 }
 
 .submit-button:hover {
-    background-color: #0056b3;
+    background-color: #00a32c;
 }
 
 .image-preview {
-    margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    margin-bottom: 20px;
+}
+
+.draggable-image-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
 }
 
 .draggable-image {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     border-radius: 5px;
     border: 1px solid #ddd;
     cursor: move;
+    transition: transform 0.2s;
+}
+
+.draggable-image:hover {
+    transform: scale(1.05);
+}
+
+.resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    cursor: nwse-resize;
+    bottom: 0;
+    right: 0;
+}
+
+.content-preview {
+    border: 1px solid #ddd;
+    padding: 15px;
+    min-height: 300px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.preview-section h2 {
+    margin-bottom: 20px;
+    color: #333;
 }
