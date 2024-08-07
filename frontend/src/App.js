@@ -5,6 +5,8 @@ import { Provider, useDispatch } from 'react-redux';
 import Login from './pages/user/login';
 import Signup from './pages/user/signup';
 import Home from './pages/home';
+import Diary from './pages/diary/diary';
+import DiaryAdd from './pages/diary/diaryAdd';
 
 import PrivateRoute from './component/privateRoute';
 import { clearUser, initializeUser } from './store/authSlice';
@@ -53,6 +55,8 @@ function App() {
               </PrivateRoute>
             }/>
           {/* <Route path="*" element={<Navigate to="/login" />} /> */}
+          <Route path='/diary' element={<Diary />} />
+          <Route path='/diaryadd' element={<DiaryAdd />} />
         </Routes>
       </Router>
   );
