@@ -6,12 +6,16 @@ import com.jsp.jpa.service.AuthServiceImpl;
 import com.jsp.jpa.service.UserServiceImpl;
 import com.jsp.jpa.vo.UserDetailsImpl;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,9 +36,13 @@ public class AuthApiController {
      * @return
      */
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody @Valid AuthDto.SignupDto signupDto) {
+    public ResponseEntity<?> signup(@RequestBody @Valid AuthDto.SignupDto signupDto, BindingResult result) {
         String encodedPassword = encoder.encode(signupDto.getPassword());
         AuthDto.SignupDto newSignupDto = AuthDto.SignupDto.encodePassword(signupDto, encodedPassword);
+
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
 
         userService.registerUser(newSignupDto);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -162,6 +170,28 @@ public class AuthApiController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(userInfo);
+    }
+
+    /**
+     * 중복 검사
+     * @param request
+     * @return
+     */
+    @PostMapping("/check-email")
+    public ResponseEntity<?> checkEmail( @RequestBody @Valid Map<String, String> request, BindingResult result){
+        String email = request.get("email");
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        log.info("email : " + email);
+        boolean isDuplicate = userService.checkEmailDuplication(email);
+        log.info("isDuplicate : " + isDuplicate);
+        if (isDuplicate) {
+            return ResponseEntity.status(409).body("이메일이 이미 사용 중입니다.");
+        } else {
+            return ResponseEntity.ok("사용 가능한 이메일입니다.");
+        }
     }
 
 }
