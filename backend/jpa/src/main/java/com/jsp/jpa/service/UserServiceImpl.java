@@ -1,16 +1,21 @@
 package com.jsp.jpa.service;
 
+import com.jsp.jpa.common.CertificationGenerator;
 import com.jsp.jpa.dto.AuthDto;
 import com.jsp.jpa.dto.UserDto;
 import com.jsp.jpa.model.User;
 import com.jsp.jpa.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +24,9 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final RedisService redisService;
+    private final CertificationGenerator certificationGenerator;
+    private final JavaMailSender mailSender;
 
     @Transactional
     @Override
@@ -50,6 +58,58 @@ public class UserServiceImpl implements UserService{
         log.info("user : " + user);
         return user.isPresent();
     }
+
+    /**
+     * 인증번호 보내기
+     * @param userEmail
+     */
+    @Override
+    public boolean sendCertificationEmail(String userEmail) {
+        try {
+            String certificationNumber = certificationGenerator.createCertificationNumber();
+            sendEmail(userEmail, certificationNumber);
+
+            // Redis에 인증 번호 저장 (5분 후 만료)
+            redisService.setValuesWithTimeout(
+                    "certification:" + userEmail,
+                    certificationNumber,
+                    300000
+            );
+
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to send certification email", e);
+            return false;
+        }
+    }
+
+
+    /**
+     * 인증번호 확인
+     * @paran userEmail, 입력한 인증번호
+     */
+    @Override
+    public boolean verifyEmail(String userEmail, String certificationNumber) {
+        String key = "certification:" + userEmail;
+        String storedCertificationNumber = redisService.getValues(key);
+        log.info("storedCertificationNumber: {}", storedCertificationNumber);
+
+        if (storedCertificationNumber != null && storedCertificationNumber.equals(certificationNumber)) {
+            // 인증 번호 일치 시 Redis에서 인증 번호 삭제
+            redisService.deleteValues(key);
+            return true;
+        }
+        return false;
+    }
+    // 이메일 보내는 함수
+    private void sendEmail(String userEmail, String certificationNumber) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(userEmail);
+        message.setSubject("회원가입 인증 메일");
+        message.setText("인증번호 : " + certificationNumber);
+        mailSender.send(message);
+    }
+
 
 
 }

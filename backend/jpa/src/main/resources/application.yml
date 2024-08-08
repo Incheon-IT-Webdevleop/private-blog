@@ -2,25 +2,12 @@ server:
   port: 8080
 
 spring:
-#  autoconfigure:
-#    exclude:
-##      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-#  redis:
-#    host: localhost
-#    port: 6379
-#    timeout: 6000
-#    lettuce:
-#      pool:
-#        max-active: 8
-#        max-idle: 8
-#        min-idle: 0
-#        time-between-eviction-runs: 10s
   datasource:
     hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://mydb.c72ss0somxra.ap-northeast-2.rds.amazonaws.com:3306/blog?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
-      username: my_user
-      password: bora931105
+      username: ${MYSQL_ID}
+      password: ${MYSQL_PWD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -31,6 +18,19 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect  # MySQL8Dialect 대신 MySQLDialect 사용
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_ID}
+    password: ${GMAIL_PWD}
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          timeout: 50000
+          starttls:
+            enable: true
   data:
     redis:
       host: localhost

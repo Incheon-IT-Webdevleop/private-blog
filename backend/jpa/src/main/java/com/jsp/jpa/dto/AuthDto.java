@@ -29,11 +29,11 @@ public class AuthDto {
         }
     }
 
-    @Getter
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     /**
      * 회원가입할 때 필요하다
      */
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class SignupDto {
         @NotBlank(message = "이메일은 필수 입력 항목입니다.")
         @Email(message = "유효한 이메일 주소여야 합니다.")
@@ -43,10 +43,14 @@ public class AuthDto {
         @NotBlank(message = "비밀번호는 필수 입력 항목입니다.")
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,20}$", message = "비밀번호는 영문자와 숫자를 포함하여 8~20자이어야 합니다.")
         private String password;
+
+        private String provider;
+
         @Builder
-        public SignupDto(String email, String password) {
+        public SignupDto(String email, String password, String provider) {
             this.email = email;
             this.password = password;
+            this.provider = provider != null ? provider : "일반";
         }
 
         public static SignupDto encodePassword(SignupDto signupDto, String encodedPassword) {

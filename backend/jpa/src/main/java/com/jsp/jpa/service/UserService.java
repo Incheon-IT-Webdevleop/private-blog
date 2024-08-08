@@ -23,4 +23,16 @@ public interface UserService {
      * @return
      */
     boolean checkEmailDuplication(String email);
+
+    /**
+     * 인증번호 보내기
+     * @param userEmail
+     */
+    boolean sendCertificationEmail(String userEmail);
+
+    /**
+     * 이메일 인증검사
+     * @param  userEmail, certificationNumber
+     */
+    boolean verifyEmail(String userEmail, String certificationNumber);
 }

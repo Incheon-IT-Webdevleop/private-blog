@@ -39,8 +39,8 @@ public class User {
 
         user.userEmail = signupDto.getEmail();
         user.userPW = signupDto.getPassword();
+        user.provider = signupDto.getProvider() != null ? signupDto.getProvider() : "일반";
         user.role = Role.USER;
-
         return user;
     }
 }
