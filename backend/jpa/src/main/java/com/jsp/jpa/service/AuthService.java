@@ -43,7 +43,7 @@ public interface AuthService {
      * @param authorities
      * @return
      */
-    public AuthDto.TokenDto generateToken(int idx, String provider, String email, String authorities, String id);
+    public AuthDto.TokenDto generateToken(int idx, String provider, String email, String authorities);
 
     /**
      * RT를 Redis에 저장

@@ -44,17 +44,17 @@ public class AuthServiceImpl implements AuthService{
         // 유저 아이디와 비밀번호를 가져와서 인증토큰을 만든다
         log.info("로그인 서비스");
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getId(), loginDto.getPassword());
-        log.info("로그인 정보 : " + loginDto.getId());
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+        log.info("로그인 정보 : " + loginDto.getEmail());
 
         Authentication authentication = authenticationManagerBuilder.getObject()
                 .authenticate(authenticationToken);
 
-        User user = userRepository.findByUserID(loginDto.getId())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginDto.getId()));
+        User user = userRepository.findByUserEmail(loginDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginDto.getEmail()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return generateToken(user.getUserIDX(), SERVER, user.getUserEmail(), getAuthorities(authentication), user.getUserID());
+        return generateToken(user.getUserIDX(), SERVER, user.getUserEmail(), getAuthorities(authentication));
     }
 
     /**
@@ -118,14 +118,14 @@ public class AuthServiceImpl implements AuthService{
      */
     @Transactional
     @Override
-    public AuthDto.TokenDto generateToken(int idx, String provider, String email, String authorities, String id) {
+    public AuthDto.TokenDto generateToken(int idx, String provider, String email, String authorities) {
         // RT가 이미 있을 경우
         if(redisService.getValues("RT(" + provider + "):" + email) != null) {
             redisService.deleteValues("RT(" + provider + "):" + email); // 삭제
         }
 
         // AT, RT 생성 및 Redis에 RT 저장
-        AuthDto.TokenDto tokenDto = jwtTokenProvider.createToken(idx, authorities, id);
+        AuthDto.TokenDto tokenDto = jwtTokenProvider.createToken(idx, authorities, email);
         saveRefreshToken(provider, email, tokenDto.getRefreshToken());
         return tokenDto;
     }
@@ -214,7 +214,7 @@ public class AuthServiceImpl implements AuthService{
         int idx = claims.get("idx", Integer.class);
         User user = userRepository.findByUserIDX(idx)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + idx));
-        return new UserDto(user.getUserIDX(), user.getRole(),user.getUserID());
+        return new UserDto(user.getUserIDX(), user.getRole(),user.getUserEmail());
     }
 
     @Override
@@ -233,7 +233,7 @@ public class AuthServiceImpl implements AuthService{
 
     private String getId(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return userDetails.getUser().getUserID(); // 사용자 ID를 추출합니다.
+        return userDetails.getUser().getUserEmail(); // 사용자 ID를 추출합니다.
     }
 
 }
