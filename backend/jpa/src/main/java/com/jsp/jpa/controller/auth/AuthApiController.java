@@ -1,23 +1,19 @@
-package com.jsp.jpa.controller;
+package com.jsp.jpa.controller.auth;
 
-import com.jsp.jpa.dto.AuthDto;
-import com.jsp.jpa.dto.UserDto;
+import com.jsp.jpa.dto.auth.AuthDto;
+import com.jsp.jpa.dto.auth.UserDto;
 import com.jsp.jpa.dto.mail.SendCertificationEmailRequest;
 import com.jsp.jpa.dto.mail.VerifyEmailRequest;
-import com.jsp.jpa.service.AuthServiceImpl;
-import com.jsp.jpa.service.UserServiceImpl;
-import com.jsp.jpa.vo.UserDetailsImpl;
+import com.jsp.jpa.service.auth.AuthServiceImpl;
+import com.jsp.jpa.service.auth.UserServiceImpl;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController

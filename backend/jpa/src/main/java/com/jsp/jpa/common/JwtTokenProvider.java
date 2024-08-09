@@ -1,9 +1,9 @@
 package com.jsp.jpa.common;
 
-import com.jsp.jpa.dto.AuthDto;
-import com.jsp.jpa.service.RedisService;
-import com.jsp.jpa.service.UserDetailsServiceImpl;
-import com.jsp.jpa.vo.UserDetailsImpl;
+import com.jsp.jpa.dto.auth.AuthDto;
+import com.jsp.jpa.service.auth.RedisService;
+import com.jsp.jpa.service.auth.UserDetailsServiceImpl;
+import com.jsp.jpa.vo.user.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

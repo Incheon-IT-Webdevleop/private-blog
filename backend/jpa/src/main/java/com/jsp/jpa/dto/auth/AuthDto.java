@@ -1,4 +1,4 @@
-package com.jsp.jpa.dto;
+package com.jsp.jpa.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
