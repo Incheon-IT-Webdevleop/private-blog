@@ -170,7 +170,6 @@ export default function SignUpModal({ onClose }) {
     const certificationClickHandler = async (e) => {
         e.preventDefault();
         setCertificationMessage('');
-        
         setCertificationNumber('');
 
         if (!duplicate || emailError) {
@@ -205,7 +204,6 @@ export default function SignUpModal({ onClose }) {
     const verifyNumberHandler = async (e) => {
         e.preventDefault();
         
-
         try {
             const res = await axios.post('/api/auth/verify-number', { userEmail:email, certificationNumber }, {
                 headers: {
