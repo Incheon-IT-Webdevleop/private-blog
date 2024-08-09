@@ -4,12 +4,10 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { Provider, useDispatch } from 'react-redux';
 import Login from './pages/user/login';
 import Signup from './pages/user/signup';
-<<<<<<< HEAD
-=======
 import Home from './pages/home';
 import Diary from './pages/diary/diary';
 import DiaryAdd from './pages/diary/diaryAdd';
->>>>>>> origin/main
+
 
 import PrivateRoute from './component/privateRoute';
 import { clearUser, initializeUser } from './store/authSlice';
