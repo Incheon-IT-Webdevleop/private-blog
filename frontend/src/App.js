@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { Provider, useDispatch } from 'react-redux';
 import Login from './pages/user/login';
 import Signup from './pages/user/signup';
+
 import Home from './pages/home';
 import Diary from './pages/diary/diary';
 import DiaryAdd from './pages/diary/diaryAdd';
@@ -50,6 +51,16 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/movie" element={<Movie />} />
           <Route path="/review" element={<Review />} />
+          <Route 
+            path='/api/mypage/info' 
+            element={
+              // PrivateRoute란 인증이 필요한, 즉 로그인을 했을 때
+              // 접근 가능하도록 세팅을 할 수 있다.
+              <PrivateRoute>
+                <Route path="/review" element={<Review />} />
+                <MyPage />
+              </PrivateRoute>
+            }/>
           {/* <Route path="*" element={<Navigate to="/login" />} /> */}
           <Route path='/diary' element={<Diary />} />
           <Route path='/diaryadd' element={<DiaryAdd />} />
