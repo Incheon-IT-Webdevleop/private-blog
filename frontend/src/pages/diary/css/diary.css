@@ -74,14 +74,12 @@
 
 
 
-
-
 /* ./diaryAdd.js */
 .add_table{
     width: 70%;
     border: 1px solid #ddd;
     border-collapse: collapse;
-    margin: 40px auto;
+    margin: 50px auto;
 }
 
 .add_table th, .add_table td {
@@ -91,6 +89,7 @@
 
 .add_table th{
     width: 100px;
+    height: 70px;
 }
 
 .add_table td{
@@ -101,7 +100,7 @@
     border: 1px solid #ddd;
     border-radius: 10px;
     width: 700px;
-    height: 30px;
+    height: 40px;
     font-size: 18px;
 }
 
@@ -132,9 +131,42 @@
     background-color: #fff;
 }
 
+.mood_icon-div{
+    display: none;
+}
+
+.mood_icon-label img{
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+}
+
+.mood_icon-div:checked+.mood_icon-label img{
+    box-shadow: 0px 0px 10px #bebebe;
+}
+
 /* react-quill 커스텀 */
 .quill {
     width: 70%;
     margin: 0 auto;
 }
 
+/* react-datepicker 커스텀 */
+.react-datepicker__day--outside-month {
+    color: #a8a8a8 !important;
+    pointer-events: none;
+}
+
+
+.react-datepicker__view-calendar-icon input{
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 150px;
+    height: 40px;
+    font-size: 18px;
+    padding: 10px 5px 10px 35px;
+}
+
+.react-datepicker__calendar-icon{
+    margin: 4px;
+}
