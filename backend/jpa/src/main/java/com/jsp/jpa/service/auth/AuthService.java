@@ -1,7 +1,7 @@
-package com.jsp.jpa.service;
+package com.jsp.jpa.service.auth;
 
-import com.jsp.jpa.dto.AuthDto;
-import com.jsp.jpa.dto.UserDto;
+import com.jsp.jpa.dto.auth.AuthDto;
+import com.jsp.jpa.dto.auth.UserDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

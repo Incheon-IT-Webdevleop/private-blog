@@ -1,11 +1,11 @@
-package com.jsp.jpa.service;
+package com.jsp.jpa.service.auth;
 
 import com.jsp.jpa.common.JwtTokenProvider;
-import com.jsp.jpa.dto.AuthDto;
-import com.jsp.jpa.dto.UserDto;
-import com.jsp.jpa.model.User;
-import com.jsp.jpa.repository.UserRepository;
-import com.jsp.jpa.vo.UserDetailsImpl;
+import com.jsp.jpa.dto.auth.AuthDto;
+import com.jsp.jpa.dto.auth.UserDto;
+import com.jsp.jpa.model.user.User;
+import com.jsp.jpa.repository.user.UserRepository;
+import com.jsp.jpa.vo.user.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

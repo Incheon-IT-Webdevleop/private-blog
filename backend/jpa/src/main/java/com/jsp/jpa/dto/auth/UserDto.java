@@ -1,4 +1,4 @@
-package com.jsp.jpa.dto;
+package com.jsp.jpa.dto.auth;
 
 import com.jsp.jpa.common.Role;
 import lombok.Data;

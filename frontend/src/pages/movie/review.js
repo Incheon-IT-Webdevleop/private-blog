@@ -1,75 +1,135 @@
-import React, { useState, useCallback, useRef } from 'react';
-import axios from 'axios';
-import update from 'immutability-helper';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import React, { useState, useRef, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import '../movie/review.css';
+import './review.css'; 
+import AWS from 'aws-sdk';
 
-const ItemType = 'IMAGE';
+AWS.config.update({
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+  region: process.env.REACT_APP_AWS_REGION,
+});
 
-const ImageItem = ({ url, index, moveImage }) => {
-    const ref = useRef(null);
-    const [size, setSize] = useState({ width: 200, height: 200 });
+const s3 = new AWS.S3();
 
-    const [, drop] = useDrop({
-        accept: ItemType,
-        hover(item) {
-            if (!ref.current) return;
-            const dragIndex = item.index;
-            const hoverIndex = index;
-            if (dragIndex === hoverIndex) return;
-            moveImage(dragIndex, hoverIndex);
-            item.index = hoverIndex;
-        },
-    });
+const genres = [
+  '액션', '코미디', '드라마', '공포', 'SF', '로맨스', '스릴러', '애니메이션'
+];
 
-    const [{ isDragging }, drag] = useDrag({
-        type: ItemType,
-        item: { index },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-    });
+const MovieReviewEditor = () => {
+  const [title, setTitle] = useState('');
 
-    drag(drop(ref));
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [content, setContent] = useState('');
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const quillRef = useRef(null);
 
-    const handleResize = (e) => {
-        e.preventDefault();
-        const startX = e.clientX;
-        const startY = e.clientY;
-        const startWidth = size.width;
-        const startHeight = size.height;
+  const handleGenreChange = (genre) => {
+    setSelectedGenres(prevGenres => 
+      prevGenres.includes(genre)
+        ? prevGenres.filter(g => g !== genre)
+        : [...prevGenres, genre]
+    );
+  };
 
-        const doDrag = (dragEvent) => {
-            setSize({
-                width: startWidth + dragEvent.clientX - startX,
-                height: startHeight + dragEvent.clientY - startY,
-            });
-        };
-
-        const stopDrag = () => {
-            document.documentElement.removeEventListener('mousemove', doDrag, false);
-            document.documentElement.removeEventListener('mouseup', stopDrag, false);
-        };
-
-        document.documentElement.addEventListener('mousemove', doDrag, false);
-        document.documentElement.addEventListener('mouseup', stopDrag, false);
+  const uploadImage = async (file) => {
+    const params = {
+      Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
+      Key: `movie-posters/${Date.now()}_${file.name}`,
+      Body: file,
+      ACL: 'public-read',
     };
 
-    return (
-        <div ref={ref} style={{ width: size.width, height: size.height, opacity: isDragging ? 0.5 : 1, position: 'relative' }}>
-            <img
-                src={url}
-                alt={`upload-${index}`}
-                style={{ width: '100%', height: '100%' }}
-                className="draggable-image"
+    try {
+      const data = await s3.upload(params).promise();
+      return data.Location;
+    } catch (error) {
+      console.error('S3 업로드 에러:', error);
+      return null;
+    }
+  };
+
+  const imageHandler = useCallback(() => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      const quill = quillRef.current.getEditor();
+      const range = quill.getSelection(true);
+
+      const url = await uploadImage(file);
+      if (url) {
+        quill.insertEmbed(range.index, 'image', url);
+        setUploadedImages(prev => [...prev, url]);
+      }
+    };
+  }, []);
+
+  const modules = {
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, false] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    },
+  };
+
+  const handleSubmit = async () => {
+    const reviewData = {
+      title,
+      genres: selectedGenres,
+      content,
+      images: uploadedImages
+    };
+
+    console.log('리뷰 데이터:', reviewData);
+    // 여기에 서버로 데이터를 보내는 로직을 추가하세요
+  };
+
+  return (
+    <div className="editor-container">
+      <input 
+        type="text" 
+        className="input"
+        placeholder="리뷰 제목" 
+        value={title} 
+        onChange={(e) => setTitle(e.target.value)}
+      />
+ 
+      <div className="genre-container">
+        {genres.map(genre => (
+          <div className="genre-checkbox" key={genre}>
+            <input 
+              type="checkbox" 
+              id={genre} 
+              checked={selectedGenres.includes(genre)}
+              onChange={() => handleGenreChange(genre)}
             />
-            <div className="resize-handle" onMouseDown={handleResize}></div>
-        </div>
-    );
+            <label htmlFor={genre}>{genre}</label>
+          </div>
+        ))}
+      </div>
+      <ReactQuill
+        ref={quillRef}
+        value={content}
+        onChange={setContent}
+        modules={modules}
+        placeholder="리뷰 내용을 입력하세요..."
+      />
+      <button className="save-button" onClick={handleSubmit}>리뷰 저장</button>
+    </div>
+  );
 };
+
 
 export default function Review() {
     const [title, setTitle] = useState('');
@@ -164,3 +224,6 @@ export default function Review() {
         </div>
     );
 }
+
+export default MovieReviewEditor;
+

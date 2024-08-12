@@ -30,6 +30,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis
+	// 메일 인증을 하기위한 메일과 인증번호 관리를 위한 redis
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 

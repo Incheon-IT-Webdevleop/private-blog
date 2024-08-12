@@ -1,6 +1,6 @@
-package com.jsp.jpa.vo;
+package com.jsp.jpa.vo.user;
 
-import com.jsp.jpa.model.User;
+import com.jsp.jpa.model.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package com.jsp.jpa.service;
+package com.jsp.jpa.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

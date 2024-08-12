@@ -16,6 +16,17 @@ export default function LoginModal() {
     const submitHandler = async (e) => {
         e.preventDefault();
         setError("");
+        
+        if (!email) {
+            setError('아이디를 입력해주세요.');
+            return;
+        }
+
+        if (!password) {
+            setError('비밀번호를 입력해주세요.');
+            return;
+        }
+
 
         try {
             const res = await axios.post('/api/auth/login', { email, password }, {
@@ -64,8 +75,8 @@ export default function LoginModal() {
                                 <label htmlFor='rememberMe'>내 정보 저장</label>
                             </div>
                             <div className='p-contents'>
-                                <p className='find' onClick={findClickHandler}>비밀번호 찾기</p>
-                                <p onClick={signUpClickHandler}>회원가입</p>
+                                <p className='find pointer' onClick={findClickHandler}>비밀번호 찾기</p>
+                                <p className='pointer' onClick={signUpClickHandler}>회원가입</p>
                             </div>
                         </div>
                         <button className='btn width-100' type='submit'>로그인</button>

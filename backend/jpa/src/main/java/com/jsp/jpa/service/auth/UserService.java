@@ -1,8 +1,7 @@
-package com.jsp.jpa.service;
+package com.jsp.jpa.service.auth;
 
-import com.jsp.jpa.dto.AuthDto;
-import com.jsp.jpa.dto.UserDto;
-import com.jsp.jpa.model.User;
+import com.jsp.jpa.dto.auth.AuthDto;
+import com.jsp.jpa.dto.auth.UserDto;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,4 +22,16 @@ public interface UserService {
      * @return
      */
     boolean checkEmailDuplication(String email);
+
+    /**
+     * 인증번호 보내기
+     * @param userEmail
+     */
+    boolean sendCertificationEmail(String userEmail);
+
+    /**
+     * 이메일 인증검사
+     * @param  userEmail, certificationNumber
+     */
+    boolean verifyEmail(String userEmail, String certificationNumber);
 }

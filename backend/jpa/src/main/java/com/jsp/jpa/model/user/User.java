@@ -1,13 +1,12 @@
-package com.jsp.jpa.model;
+package com.jsp.jpa.model.user;
 
 import com.jsp.jpa.common.Role;
-import com.jsp.jpa.dto.AuthDto;
+import com.jsp.jpa.dto.auth.AuthDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 @Entity(name = "member")
 @Getter
@@ -39,8 +38,8 @@ public class User {
 
         user.userEmail = signupDto.getEmail();
         user.userPW = signupDto.getPassword();
+        user.provider = signupDto.getProvider() != null ? signupDto.getProvider() : "일반";
         user.role = Role.USER;
-
         return user;
     }
 }

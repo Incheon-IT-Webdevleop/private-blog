@@ -4,8 +4,11 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { Provider, useDispatch } from 'react-redux';
 import Login from './pages/user/login';
 import Signup from './pages/user/signup';
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> b3393ce3823eaa8774db760cfa9a9013b7f37a1f
 import Home from './pages/home';
 import Diary from './pages/diary/diary';
 import DiaryAdd from './pages/diary/diaryAdd';
