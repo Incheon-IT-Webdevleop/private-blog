@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import EmailInput from '../../emailInput/emailInput';
 import Error from '../../error_message/error';
+import SignupTitle from '../../signupTitle/signupTitle';
 
 
 export default function SignUpModal({ onClose }) {
@@ -75,10 +76,7 @@ export default function SignUpModal({ onClose }) {
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <div className='flex just-btw align-center'>
-                    <h2>회원가입</h2>
-                    <div className='close-btn pointer' onClick={onClose}>X</div>
-                </div>
+                <SignupTitle title={"회원가입"} onClose={onClose}/>
                 
                 <div className="input-group">
                     <form onSubmit={submitHandler}>
