@@ -4,12 +4,12 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { Provider, useDispatch } from 'react-redux';
 import Login from './pages/user/login';
 import Signup from './pages/user/signup';
-<<<<<<< HEAD
-=======
+
+
 import Home from './pages/home';
 import Diary from './pages/diary/diary';
 import DiaryAdd from './pages/diary/diaryAdd';
->>>>>>> origin/main
+
 
 import PrivateRoute from './component/privateRoute';
 import { clearUser, initializeUser } from './store/authSlice';
@@ -61,6 +61,7 @@ function App() {
               // PrivateRoute란 인증이 필요한, 즉 로그인을 했을 때
               // 접근 가능하도록 세팅을 할 수 있다.
               <PrivateRoute>
+                <Route path="/review" element={<Review />} />
                 <MyPage />
               </PrivateRoute>
             }/>

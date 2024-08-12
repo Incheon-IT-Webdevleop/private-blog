@@ -159,17 +159,7 @@ export default function Review() {
                     </div>
                     <button onClick={handleSubmit} className="submit-button">리뷰 저장</button>
                 </div>
-                <div className="preview-section">
-                    <h2>{title}</h2>
-                    <DndProvider backend={HTML5Backend}>
-                        <div className="image-preview">
-                            {imageURLs.map((url, index) => (
-                                <ImageItem key={index} index={index} url={url} moveImage={moveImage} />
-                            ))}
-                        </div>
-                    </DndProvider>
-                    <div className="content-preview" dangerouslySetInnerHTML={{ __html: content }} />
-                </div>
+               
             </div>
         </div>
     );
