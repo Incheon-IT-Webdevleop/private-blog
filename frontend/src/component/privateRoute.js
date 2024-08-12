@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { validateToken } from '../api/auth';
-import { clearUser } from '../store/authSlice';
+import { clearUser, initializeUser } from '../store/authSlice';
 
 const PrivateRoute = ({ children }) => {
 
@@ -14,6 +14,7 @@ const PrivateRoute = ({ children }) => {
   const [isValidToken, setIsValidToken] = useState(null);
   // 토큰을 store에서 가져온다(전역적으로 뿌려진 토큰)
   const token = useSelector((state) => state.auth.token);
+  const user = useSelector(state => state.auth.user);
   // store에서 export한 함수들을 가져온다
   const dispatch = useDispatch();
 
@@ -22,7 +23,7 @@ const PrivateRoute = ({ children }) => {
   useEffect(() => {
     // mount, update시 실행
     const checkToken = async () => {
-      
+      const token = localStorage.getItem('accessToken');
       console.log(token);
       if (token) {
         // await : 비동기 통신을 할 때 await뒤에 있는 함수가 끝날때까지
@@ -30,14 +31,19 @@ const PrivateRoute = ({ children }) => {
         //         오래걸리는 작업을 끝내고 다음 코드를 실행하고 싶을 때
         //         붙힌다
         //         그리고 무조건 await을 쓴 함수에는 async를 붙혀준다
-        const { isValid } = await validateToken(token);
+        const { isValid, user } = await validateToken(token);
         // 토큰 검증
         // auth.js에 있다
         setIsValidToken(isValid);
-        if (!isValid) {
-          // authSlice에서 정의한 clearUser()를 실행해라
+        // console.log()
+        if(isValid){
+          dispatch(initializeUser({ user, token }));
+          // console.log("세팅");
+        }else{
           dispatch(clearUser());
         }
+        // console.log(user);
+        // console.log(token);
       } else {
         setIsValidToken(false);
       }

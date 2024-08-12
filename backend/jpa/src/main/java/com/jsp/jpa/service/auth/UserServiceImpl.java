@@ -108,6 +108,16 @@ public class UserServiceImpl implements UserService{
         mailSender.send(message);
     }
 
+    /**
+     * 비밀번호 변경
+     */
+    private boolean ChangePwd(){
+
+
+
+        return true;
+
+    }
 
 
 }

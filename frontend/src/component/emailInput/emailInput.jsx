@@ -145,7 +145,7 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
                 <input
                     type='email'
                     name='email'
-                    className='input'
+                    className='input1'
                     value={email}
                     id='email'
                     onChange={(e) => changeHandler(e.target.value, "email")}
@@ -163,7 +163,7 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
                     <input
                         type='text'
                         name='setCertificationNumber'
-                        className='input'
+                        className='input1'
                         value={certificationNumber}
                         id='setCertificationNumber'
                         placeholder='인증번호'

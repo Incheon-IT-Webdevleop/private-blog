@@ -17,8 +17,9 @@ export const validateToken = async (token) => {
     // 백엔드에서 상태 코드를 정의해 줄 수 있다
     if (response.status === 200) {
       // UserDTO를 같이 보내주는데 그걸 리턴해라
-      const user = response.data.user;
-      return { isValid: true, user };
+      // console.log(response);
+      const user = response.data;
+      return { isValid: true, user:user };
     }
     return { isValid: false, user: null };
   } catch (error) {
@@ -44,7 +45,7 @@ const reissueToken = async (expiredToken) => {
       // 가져온 토큰을 로컬스토리지에 저장하고
       localStorage.setItem('accessToken', newAccessToken);
       // 
-      return { isValid: true, user: response.data.user };
+      return { isValid: true, user: response.data };
     } else {
       return { isValid: false, user: null };
     }

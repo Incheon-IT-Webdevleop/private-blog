@@ -60,6 +60,7 @@ public class AuthApiController {
         if(loginDto.getEmail().isEmpty() || loginDto.getPassword().isEmpty()){
             return ResponseEntity.badRequest().body("empty");
         }
+
         AuthDto.TokenDto tokenDto = authService.login(loginDto);
 
         // RT 저장
@@ -70,11 +71,13 @@ public class AuthApiController {
                 .secure(true)
                 .build();
         log.info("AccessToken : " + tokenDto.getAccessToken());
+
+        UserDto userDto = userService.getUserInfo(loginDto.getEmail());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, httpCookie.toString())
                 // AT 저장
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAccessToken())
-                .build();
+                .body(userDto);
     }
 
     /**
@@ -84,8 +87,11 @@ public class AuthApiController {
      */
     @PostMapping("/validate")
     public ResponseEntity<?> validate(@RequestHeader("Authorization") String requestAccessToken) {
+
         if (!authService.validate(requestAccessToken)) {
-            return ResponseEntity.status(HttpStatus.OK).build(); // 재발급 필요X
+            String token = requestAccessToken.replace("Bearer ", "").trim();
+            UserDto userInfo = authService.getUserInfo(token);
+            return ResponseEntity.status(HttpStatus.OK).body(userInfo); // 재발급 필요X
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 재발급 필요
         }
@@ -114,12 +120,15 @@ public class AuthApiController {
                     .httpOnly(true)
                     .secure(true)
                     .build();
+
+            String token = reissuedTokenDto.getAccessToken().replace("Bearer ", "").trim();
+            UserDto userInfo = authService.getUserInfo(token);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                     // AT 저장
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + reissuedTokenDto.getAccessToken())
-                    .build();
+                    .body(userInfo);
 
         } else { // Refresh Token 탈취 가능성
             // Cookie 삭제 후 재로그인 유도
@@ -233,6 +242,20 @@ public class AuthApiController {
             return ResponseEntity.status(400).body("fail");
         }
 
+    }
+
+    /**
+     * 비밀번호 변경
+     * @param dto
+     * @return
+     */
+    @PatchMapping("/change-pwd")
+    public ResponseEntity<?> changePwd(@RequestBody AuthDto.ChangePwdDto dto){
+        log.info("dto : " + dto);
+        if(!dto.getPwd().equals(dto.getPwdCheck())){
+            return ResponseEntity.badRequest().body("fail");
+        }
+        return ResponseEntity.ok("success");
     }
 
 }

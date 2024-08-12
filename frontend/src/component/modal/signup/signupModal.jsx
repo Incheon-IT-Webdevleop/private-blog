@@ -80,23 +80,23 @@ export default function SignUpModal({ onClose }) {
                 
                 <div className="input-group">
                     <form onSubmit={submitHandler}>
-                    <EmailInput
-                        email={email}
-                        setEmail={setEmail}
-                        setEmailState={setEmailState}
-                        emailError={emailError}
-                        setEmailError={setEmailError}
-                        duplicate={duplicate}
-                        setDuplicate={setDuplicate}
-                        certification={certification}
-                        setCertification={setCertification}
-                    />
+                        <EmailInput
+                            email={email}
+                            setEmail={setEmail}
+                            setEmailState={setEmailState}
+                            emailError={emailError}
+                            setEmailError={setEmailError}
+                            duplicate={duplicate}
+                            setDuplicate={setDuplicate}
+                            certification={certification}
+                            setCertification={setCertification}
+                        />
 
                         <div className="input-container">
                             <input
                                 type='password'
                                 name='password'
-                                className='input'
+                                className='input1'
                                 value={password}
                                 id='password'
                                 onChange={(e) => changeHandler(e.target.value, "password")}
@@ -110,7 +110,7 @@ export default function SignUpModal({ onClose }) {
                             <input
                                 type='password'
                                 name='checkPassword'
-                                className='input'
+                                className='input1'
                                 value={checkPassword}
                                 id='checkPassword'
                                 onChange={(e) => changeHandler(e.target.value, "checkPassword")}
