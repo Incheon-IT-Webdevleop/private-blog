@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import './review.css'; 
+import './review.css'; // CSS 파일을 불러옵니다.
 import AWS from 'aws-sdk';
 
 AWS.config.update({
@@ -18,7 +18,7 @@ const genres = [
 
 const MovieReviewEditor = () => {
   const [title, setTitle] = useState('');
-
+  const [rating, setRating] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [content, setContent] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]);
@@ -86,6 +86,7 @@ const MovieReviewEditor = () => {
   const handleSubmit = async () => {
     const reviewData = {
       title,
+      rating,
       genres: selectedGenres,
       content,
       images: uploadedImages
@@ -104,7 +105,16 @@ const MovieReviewEditor = () => {
         value={title} 
         onChange={(e) => setTitle(e.target.value)}
       />
- 
+      <select 
+        className="select"
+        value={rating} 
+        onChange={(e) => setRating(e.target.value)}
+      >
+        <option value="">평점 선택</option>
+        {[1, 2, 3, 4, 5].map(score => (
+          <option key={score} value={score}>{score}점</option>
+        ))}
+      </select>
       <div className="genre-container">
         {genres.map(genre => (
           <div className="genre-checkbox" key={genre}>
@@ -130,100 +140,4 @@ const MovieReviewEditor = () => {
   );
 };
 
-
-export default function Review() {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [imageURLs, setImageURLs] = useState([]);
-    const fileInputRef = useRef(null);
-
-    const handleImageUpload = async (e) => {
-        const files = e.target.files;
-        const urls = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const formData = new FormData();
-            formData.append('image', files[i]);
-            formData.append('key', 'c2b9ff532c2df7d835429f733d195fba');
-
-            try {
-                const response = await axios.post('https://api.imgbb.com/1/upload', formData);
-                urls.push(response.data.data.url);
-            } catch (error) {
-                console.error('Image upload failed', error);
-            }
-        }
-
-        setImageURLs((prevURLs) => [...prevURLs, ...urls]);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const reviewData = {
-            title,
-            content,
-            images: imageURLs.join(','),
-        };
-
-        try {
-            await axios.post('/api/reviews', reviewData);
-            alert('리뷰가 성공적으로 저장되었습니다.');
-        } catch (error) {
-            console.error('Review save failed', error);
-        }
-    };
-
-    const moveImage = useCallback((dragIndex, hoverIndex) => {
-        const draggedImage = imageURLs[dragIndex];
-        setImageURLs((prevURLs) =>
-            update(prevURLs, {
-                $splice: [
-                    [dragIndex, 1],
-                    [hoverIndex, 0, draggedImage],
-                ],
-            })
-        );
-    }, [imageURLs]);
-
-    const triggerFileInput = () => {
-        fileInputRef.current.click();
-    };
-
-    return (
-        <div className="review-container">
-            <h1>영화 리뷰 작성</h1>
-            <div className="review-layout">
-                <div className="editor-section">
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="title-input"
-                        placeholder="제목을 입력하세요"
-                    />
-                    <ReactQuill
-                        value={content}
-                        onChange={setContent}
-                        className="content-editor"
-                    />
-                    <div className="image-upload">
-                        <input
-                            type="file"
-                            multiple
-                            onChange={handleImageUpload}
-                            className="file-input"
-                            ref={fileInputRef}
-                        />
-                        <button onClick={triggerFileInput} className="upload-button">이미지 업로드</button>
-                    </div>
-                    <button onClick={handleSubmit} className="submit-button">리뷰 저장</button>
-                </div>
-               
-            </div>
-        </div>
-    );
-}
-
 export default MovieReviewEditor;
-
