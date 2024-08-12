@@ -1,6 +1,6 @@
-package com.jsp.jpa.repository;
+package com.jsp.jpa.repository.user;
 
-import com.jsp.jpa.model.User;
+import com.jsp.jpa.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUserEmail(String email);
+    Optional<User> findByUserEmail(String userEmail);
 
     Optional<User> findByUserIDX(int idx);
 }

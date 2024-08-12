@@ -1,17 +1,20 @@
-package com.jsp.jpa.controller;
+package com.jsp.jpa.controller.auth;
 
-import com.jsp.jpa.dto.AuthDto;
-import com.jsp.jpa.dto.UserDto;
-import com.jsp.jpa.service.AuthServiceImpl;
-import com.jsp.jpa.service.UserServiceImpl;
-import com.jsp.jpa.vo.UserDetailsImpl;
+import com.jsp.jpa.dto.auth.AuthDto;
+import com.jsp.jpa.dto.auth.UserDto;
+import com.jsp.jpa.dto.mail.SendCertificationEmailRequest;
+import com.jsp.jpa.dto.mail.VerifyEmailRequest;
+import com.jsp.jpa.service.auth.AuthServiceImpl;
+import com.jsp.jpa.service.auth.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,9 +35,13 @@ public class AuthApiController {
      * @return
      */
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody @Valid AuthDto.SignupDto signupDto) {
+    public ResponseEntity<?> signup(@RequestBody @Valid AuthDto.SignupDto signupDto, BindingResult result) {
         String encodedPassword = encoder.encode(signupDto.getPassword());
         AuthDto.SignupDto newSignupDto = AuthDto.SignupDto.encodePassword(signupDto, encodedPassword);
+
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
 
         userService.registerUser(newSignupDto);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -50,6 +57,9 @@ public class AuthApiController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthDto.LoginDto loginDto) {
         // User 등록 및 Refresh Token 저장
+        if(loginDto.getEmail().isEmpty() || loginDto.getPassword().isEmpty()){
+            return ResponseEntity.badRequest().body("empty");
+        }
         AuthDto.TokenDto tokenDto = authService.login(loginDto);
 
         // RT 저장
@@ -162,6 +172,67 @@ public class AuthApiController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(userInfo);
+    }
+
+    /**
+     * 중복 검사
+     * @param request
+     * @return
+     */
+    @PostMapping("/check-email")
+    public ResponseEntity<?> checkEmail( @RequestBody @Valid Map<String, String> request, BindingResult result){
+        String email = request.get("email");
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        log.info("email : " + email);
+        boolean isDuplicate = userService.checkEmailDuplication(email);
+        log.info("isDuplicate : " + isDuplicate);
+        if (isDuplicate) {
+            return ResponseEntity.status(409).body("이메일이 이미 사용 중입니다.");
+        } else {
+            return ResponseEntity.ok("사용 가능한 이메일입니다.");
+        }
+    }
+
+    /**
+     * 인증 버튼 눌렀을 시 인증코드를 받기 위해 접근
+     * @param request
+     * @return
+     */
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> sendVerifyCode(@RequestBody SendCertificationEmailRequest request){
+        String email = request.getUserEmail();
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid email address");
+        }
+
+        email = email.trim();
+        log.info("email : " + email);
+        boolean sendResult = userService.sendCertificationEmail(email);
+
+        if (sendResult) {
+            return ResponseEntity.ok("success");
+        } else {
+            return ResponseEntity.internalServerError().body("fail");
+        }
+    }
+
+    @PostMapping("/verify-number")
+    public ResponseEntity<?> matchVerifyNumber(@RequestBody VerifyEmailRequest request){
+
+        log.info("들어온 값" + request);
+
+        // 서비스를 통해 이메일 인증 번호를 검증하고 결과를 반환
+        boolean verificationResult = userService.verifyEmail(request.getUserEmail(), request.getCertificationNumber());
+
+        if (verificationResult) {
+            return ResponseEntity.ok("success");
+        } else {
+            return ResponseEntity.status(400).body("fail");
+        }
+
     }
 
 }

@@ -1,11 +1,12 @@
-package com.jsp.jpa.model;
+package com.jsp.jpa.model.user;
 
 import com.jsp.jpa.common.Role;
-import com.jsp.jpa.dto.AuthDto;
+import com.jsp.jpa.dto.auth.AuthDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity(name = "member")
 @Getter
@@ -17,13 +18,14 @@ public class User {
     @Column(name = "member_idx")
     private int userIDX;
 
-    @Column(name = "member_email")
+    @Column(name = "member_email", unique = true, nullable = false)
     private String userEmail; // Principal
 
-    @Column(name = "member_pwd")
+    @Column(name = "member_pwd", nullable = false)
     private String userPW; // Credential
 
     @Column(name = "member_provider")
+    @ColumnDefault("일반")
     private String provider;
 
     @Enumerated(EnumType.STRING)
@@ -36,8 +38,8 @@ public class User {
 
         user.userEmail = signupDto.getEmail();
         user.userPW = signupDto.getPassword();
+        user.provider = signupDto.getProvider() != null ? signupDto.getProvider() : "일반";
         user.role = Role.USER;
-
         return user;
     }
 }
