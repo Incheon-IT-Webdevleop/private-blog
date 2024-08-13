@@ -35,5 +35,12 @@ public interface UserService {
      */
     boolean verifyEmail(String userEmail, String certificationNumber);
 
+    /**
+     * 비밀번호 변경
+     * @param dto
+     * @return
+     */
     boolean changePwd(AuthDto.ChangePwdDto dto);
+
+
 }

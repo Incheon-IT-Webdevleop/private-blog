@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { validateToken } from '../api/auth';
 import { clearUser, initializeUser } from '../store/authSlice';
+import LoginModal from './modal/login/loginModal';
 
 const PrivateRoute = ({ children }) => {
 
@@ -13,9 +14,9 @@ const PrivateRoute = ({ children }) => {
   // 유효한 토큰인지에 관한 상태
   const [isValidToken, setIsValidToken] = useState(null);
   // 토큰을 store에서 가져온다(전역적으로 뿌려진 토큰)
-  const token = useSelector((state) => state.auth.token);
-  const user = useSelector(state => state.auth.user);
+  const token = useSelector((state) => state.auth.token); 
   // store에서 export한 함수들을 가져온다
+  const [showLoginModal, setShowLoginModal] = useState(false); // 모달 상태 추가
   const dispatch = useDispatch();
 
   // useEffect = 컴포넌트가 처음 나타났을때(mount), 사라졌을 때(unmount)
@@ -38,14 +39,17 @@ const PrivateRoute = ({ children }) => {
         // console.log()
         if(isValid){
           dispatch(initializeUser({ user, token }));
+         
           // console.log("세팅");
         }else{
           dispatch(clearUser());
+          setShowLoginModal(true);
         }
         // console.log(user);
         // console.log(token);
       } else {
         setIsValidToken(false);
+        setShowLoginModal(true);
       }
       setIsLoading(false);
     };
@@ -61,7 +65,11 @@ const PrivateRoute = ({ children }) => {
   // 토큰이 없을 떄
   if (!isValidToken) {
     // /login으로 이동해라
-    return <Navigate to="/login" />;
+    return (
+      <>
+        {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+      </>
+    );;
   }
   // PrivateRoute로 감싸준 자식을 렌더링해라
   return children;

@@ -4,6 +4,7 @@ import com.jsp.jpa.dto.auth.AuthDto;
 import com.jsp.jpa.dto.auth.UserDto;
 import com.jsp.jpa.dto.mail.SendCertificationEmailRequest;
 import com.jsp.jpa.dto.mail.VerifyEmailRequest;
+import com.jsp.jpa.repository.user.UserRepository;
 import com.jsp.jpa.service.auth.AuthServiceImpl;
 import com.jsp.jpa.service.auth.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -71,8 +72,6 @@ public class AuthApiController {
                 .secure(true)
                 .build();
         log.info("AccessToken : " + tokenDto.getAccessToken());
-
-        UserDto userDto = userService.getUserInfo(loginDto.getEmail());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, httpCookie.toString())
                 // AT 저장
@@ -90,8 +89,7 @@ public class AuthApiController {
 
         if (!authService.validate(requestAccessToken)) {
             String token = requestAccessToken.replace("Bearer ", "").trim();
-            UserDto userInfo = authService.getUserInfo(token);
-            return ResponseEntity.status(HttpStatus.OK).body(userInfo); // 재발급 필요X
+            return ResponseEntity.status(HttpStatus.OK).body("success"); // 재발급 필요X
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 재발급 필요
         }
@@ -259,6 +257,21 @@ public class AuthApiController {
         }
         userService.changePwd(AuthDto.ChangePwdDto.encodePassword(dto, encoder.encode(dto.getPwd())));
         return ResponseEntity.ok("success");
+    }
+
+    @DeleteMapping("/sign-out")
+    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String requestAccessToken){
+        authService.signOut(requestAccessToken);
+
+        ResponseCookie responseCookie = ResponseCookie.from("refresh-token", "")
+                .maxAge(0)
+                .path("/")
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .build();
     }
 
 }

@@ -236,6 +236,30 @@ public class AuthServiceImpl implements AuthService{
         return userDetails.getUser().getUserEmail(); // 사용자 ID를 추출합니다.
     }
 
+    /**
+     * 회원 탈퇴
+     *
+     * @param requestAccessToken
+     */
+    @Override
+    @Transactional
+    public void signOut(String requestAccessToken) {
+        String token = resolveToken(requestAccessToken);
+
+        String principal = getPrincipal(token);
+        log.info("principal : " + principal);
+
+        // Redis에 저장되어 있는 RT 삭제
+        String refreshTokenInRedis = redisService.getValues("RT(" + SERVER + "):" + principal);
+        if (refreshTokenInRedis != null) {
+            redisService.deleteValues("RT(" + SERVER + "):" + principal);
+        }
+
+        User user = userRepository.findByUserEmail(principal)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + principal));
+        userRepository.delete(user);
+    }
+
 }
 
 /**
