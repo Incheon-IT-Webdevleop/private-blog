@@ -4,6 +4,8 @@ import { clearUser } from '../store/authSlice';
 
 // 로그인한 유저의 토큰이 유효한지 검증하는 로직
 export const validateToken = async (token) => {
+
+  
   try {
     // axios = fetch, ajax와 같이 비동기통신을 할 수 있다
     const response = await axios.post('/api/auth/validate', null, {
@@ -17,8 +19,11 @@ export const validateToken = async (token) => {
     // 백엔드에서 상태 코드를 정의해 줄 수 있다
     if (response.status === 200) {
       // UserDTO를 같이 보내주는데 그걸 리턴해라
-      const user = response.data.user;
-      return { isValid: true, user };
+      // console.log(response);
+      
+      const user = await findUser(token);
+      console.log(user);
+      return { isValid: true, user:user };
     }
     return { isValid: false, user: null };
   } catch (error) {
@@ -44,7 +49,10 @@ const reissueToken = async (expiredToken) => {
       // 가져온 토큰을 로컬스토리지에 저장하고
       localStorage.setItem('accessToken', newAccessToken);
       // 
-      return { isValid: true, user: response.data.user };
+      const user = findUser(newAccessToken);
+      
+
+      return { isValid: true, user: user };
     } else {
       return { isValid: false, user: null };
     }
@@ -57,3 +65,29 @@ const reissueToken = async (expiredToken) => {
     return { isValid: false, user: null };
   }
 };
+
+// 유저 정보 찾기
+const findUser = async (token) => {
+
+ 
+
+  if(token === null){
+    return;
+  }
+  try{
+    const response = await axios.get('/api/auth/userinfo', null, {
+      headers: {
+        // 토큰은 기본적으로 헤더에 Authorization이라는 이름으로
+        // 토큰앞에 `Bearer `을 붙혀서 보내줘야한다
+        'Authorization': `Bearer ${token}`
+      },
+      withCredentials: true
+    });
+    if (response.status === 200){
+      const user = response.data;
+      return user;
+    }
+  }catch(error){
+    return null;
+  }
+}

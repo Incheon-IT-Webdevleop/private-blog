@@ -14,7 +14,6 @@ const PrivateRoute = ({ children }) => {
   const [isValidToken, setIsValidToken] = useState(null);
   // 토큰을 store에서 가져온다(전역적으로 뿌려진 토큰)
   const token = useSelector((state) => state.auth.token);
-  console.log(token);
   // store에서 export한 함수들을 가져온다
   const dispatch = useDispatch();
 

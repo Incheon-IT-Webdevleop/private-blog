@@ -42,4 +42,10 @@ public class User {
         user.role = Role.USER;
         return user;
     }
+
+    public void changePassword(String encodedPassword) {
+        this.userPW = encodedPassword;
+    }
+
+
 }

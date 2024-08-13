@@ -99,6 +99,18 @@ public class UserServiceImpl implements UserService{
         }
         return false;
     }
+
+    @Override
+    public boolean changePwd(AuthDto.ChangePwdDto dto) {
+        User user = userRepository.findByUserEmail(dto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + dto.getEmail()));
+
+        user.changePassword(dto.getPwd());
+        userRepository.save(user);
+
+        return false;
+    }
+
     // 이메일 보내는 함수
     private void sendEmail(String userEmail, String certificationNumber) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -107,7 +119,6 @@ public class UserServiceImpl implements UserService{
         message.setText("인증번호 : " + certificationNumber);
         mailSender.send(message);
     }
-
 
 
 }

@@ -1,26 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Error from '../error_message/error';
 
-export default function EmailCertification({
-    email, setEmail, setDuplicate, setEmailState, emailError, setEmailError,
-    certification, setCertification
-}) {
+
+export default function EmailInput({email, setEmail, setEmailState, emailError, setEmailError, duplicate, setDuplicate, certification, setCertification, type}) {
     const [certificationMessage, setCertificationMessage] = useState('');
-    const [certificationStatus, setCertificationStatus] = useState('');
     const [certificationNumber, setCertificationNumber] = useState('');
     const [certificationNumberState, setCertificationNumberState] = useState(false);
-
     const [timer, setTimer] = useState(300);
     const [minutes, setMinutes] = useState(5);
     const [seconds, setSeconds] = useState(0);
     const timerRef = useRef(null);
-
-    useEffect(() => {
-        if (certificationStatus === 'sent') {
-            startTimer();
-        }
-    }, [certificationStatus]);
 
     useEffect(() => {
         if (timer > 0) {
@@ -37,30 +27,42 @@ export default function EmailCertification({
 
     const startTimer = () => {
         if (timerRef.current) clearInterval(timerRef.current);
-        setTimer(300); 
+        setTimer(300);
         timerRef.current = setInterval(() => {
             setTimer((prevTimer) => prevTimer - 1);
-        }, 1000); 
+        }, 1000);
     };
-
-    const changeHandler = (value) => {
-        setEmail(value);
-        setCertificationMessage('');
-        if (!validateEmail(value)) {
-            setEmailError("유효하지 않은 이메일 주소입니다.");
-            setEmailState(false);
-        } else {
-            setEmailError('');
-            setEmailState(true);
-        }
-    }
 
     const validateEmail = (email) => {
         const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return regex.test(email);
     };
 
+    const changeHandler = (value, type) => {
+        switch (type) {
+            case "email":
+                setEmail(value);
+                setCertificationMessage('');
+                if (!validateEmail(value)) {
+                    setEmailError("유효하지 않은 이메일 주소입니다.");
+                    setEmailState(false);
+                } else {
+                    setEmailError('');
+                }
+                break;
+            case "setCertificationNumber":
+                setCertificationNumber(value);
+                break;
+            default:
+                break;
+        }
+    };
+
     const checkEmailDuplicate = async (email) => {
+        if(type==="find"){
+            setEmailError("");
+            return;
+        }
         try {
             const res = await axios.post('/api/auth/check-email', { email }, {
                 headers: {
@@ -71,6 +73,7 @@ export default function EmailCertification({
             if (res.status === 200) {
                 setEmailError("");
                 setDuplicate(true);
+                setEmailState(true);
             }
         } catch (e) {
             if (e.response && e.response.status === 409) {
@@ -79,6 +82,7 @@ export default function EmailCertification({
                 setEmailError('이메일 중복 검사에 실패했습니다.');
             }
             setDuplicate(false);
+            setEmailState(false);
         }
     };
 
@@ -86,17 +90,18 @@ export default function EmailCertification({
         e.preventDefault();
         setCertificationMessage('');
         setCertificationNumber('');
-
-        if (!emailState || emailError) {
-            setEmailError("이메일을 입력 후 진행해주세요.");
-            return;
+        if(type!=="find"){
+            if (!duplicate || emailError) {
+                setEmailError("이메일을 입력 후 진행해주세요.");
+                return;
+            }
         }
         setCertificationMessage("인증 메일 보내는 중..");
         setCertificationNumberState(true);
         try {
             const res = await axios.post('/api/auth/verify-email', { userEmail: email }, {
                 headers: {
-                    'Content-Type': 'application/json',  
+                    'Content-Type': 'application/json',
                 },
                 withCredentials: true,
             });
@@ -117,7 +122,6 @@ export default function EmailCertification({
 
     const verifyNumberHandler = async (e) => {
         e.preventDefault();
-        
         try {
             const res = await axios.post('/api/auth/verify-number', { userEmail: email, certificationNumber }, {
                 headers: {
@@ -127,9 +131,10 @@ export default function EmailCertification({
 
             if (res.status === 200) {
                 setCertification(true);
-                setCertificationStatus('success');
                 setCertificationNumberState(false);
                 setEmailError('');
+                setTimer(300);
+                clearInterval(timerRef.current); // 성공 시 타이머 정리
             }
         } catch (e) {
             setCertification(false);
@@ -138,54 +143,49 @@ export default function EmailCertification({
             setCertificationMessage('');
         }
     };
-    
-    return(
-        <div>
-            <div className="input-group">
-                <div className="input-container flex gap-10">
-                    <input
-                        type='email'
-                        name='email'
-                        className='input'
-                        value={email}
-                        id='email'
-                        onChange={(e) => changeHandler(e.target.value)}
-                        onBlur={() => {
-                            if (validateEmail(email)) {
-                                checkEmailDuplicate(email);
-                            }
-                        }}
-                    />
-                    <label className={`label ${email ? 'shrink' : ''}`} htmlFor="email">이메일</label>
-                    <button className='btn btn-width' onClick={certificationClickHandler}>이메일 인증</button>
-                </div>
-                
-                {certificationNumberState && (
-                    <div className="input-container flex gap-10">
-                        <input
-                            type='text'
-                            name='setCertificationNumber'
-                            className='input'
-                            value={certificationNumber}
-                            id='setCertificationNumber'
-                            placeholder='인증번호'
-                            onChange={(e) => setCertificationNumber(e.target.value)}
-                        />
-                        <button className='btn btn-width' onClick={verifyNumberHandler}>인증 번호 확인</button>
-                    </div>
-                )}
-                
-                {certificationNumberState && (
-                    <div className='flex just-btw align-center'>
-                        <p style={{color:"blue"}}>
-                            {certificationMessage}
-                        </p>
-                        {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-                    </div>
-                )}
-                
-                {emailError && <Error props={emailError} />}
+
+    return (
+        <div className="input-container">
+            <div className="flex gap-10">
+                <input
+                    type='email'
+                    name='email'
+                    className='input1'
+                    value={email}
+                    id='email'
+                    onChange={(e) => changeHandler(e.target.value, "email")}
+                    onBlur={() => {
+                        if (validateEmail(email)) {
+                            checkEmailDuplicate(email);
+                        }
+                    }}
+                />
+                <label className={`label ${email ? 'shrink' : ''}`} htmlFor="email">이메일</label>
+                <button className='btn btn-width' onClick={(e) => certificationClickHandler(e)}>이메일 인증</button>
             </div>
+            {certificationNumberState && (
+                <div className="flex gap-10">
+                    <input
+                        type='text'
+                        name='setCertificationNumber'
+                        className='input1'
+                        value={certificationNumber}
+                        id='setCertificationNumber'
+                        placeholder='인증번호'
+                        onChange={(e) => changeHandler(e.target.value, "setCertificationNumber")}
+                    />
+                    <button className='btn btn-width' onClick={(e) => verifyNumberHandler(e)}>인증 번호 확인</button>
+                </div>
+            )}
+            {certificationNumberState && (
+                <div className='flex just-btw aligin-center'>
+                    <p style={{color:"blue"}}>
+                        {certificationMessage}
+                    </p>
+                    {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+                </div>
+            )}
+            {emailError && <Error props={emailError} />}
         </div>
     );
 }

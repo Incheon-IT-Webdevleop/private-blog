@@ -37,7 +37,8 @@ export default function LoginModal() {
             });
             const accessToken = res.headers['authorization'].split(' ')[1];
             localStorage.setItem('accessToken', accessToken);
-            const user = res.data.user;
+            const user = res.data;
+            console.log(user)
             dispatch(setUser({ user, token: accessToken }));
             dispatch(initializeUser({ user, token: accessToken }));
             console.log("로그인성공")
@@ -60,12 +61,12 @@ export default function LoginModal() {
                 <div className="input-group">
                     <form onSubmit={submitHandler}>
                         <div className="input-container">
-                            <input type='email' name='email' className='input' value={email} id='email'
+                            <input type='email' name='email' className='input1' value={email} id='email'
                                 onChange={(e) => setEmail(e.target.value)} />
                             <label className={`label ${email ? 'shrink' : ''}`} htmlFor="email">이메일</label>
                         </div>
                         <div className="input-container">
-                            <input type='password' name='password' className='input' value={password} id='password'
+                            <input type='password' name='password' className='input1' value={password} id='password'
                                 onChange={(e) => setPassword(e.target.value)} />
                             <label className={`label ${password ? 'shrink' : ''}`} htmlFor="password">비밀번호</label>
                         </div>

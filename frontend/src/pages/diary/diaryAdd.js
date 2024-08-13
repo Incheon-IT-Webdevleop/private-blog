@@ -4,13 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import 'react-quill/dist/quill.snow.css';
 import './css/diary.css'
 
+import DateCalendar from './datePicker';
+import QuillEditor from './QuillEditor';
+
+
 function DiaryAdd(){
-    const navigate = useNavigate();
+    // 테이블부분
+    // 선택된 라디오 버튼의 값을 상태로 관리
+    const [selectedValue,setSelectValue] =useState('');
 
-    const onClick = () => {
-        navigate("/diary");
-    };
+    // 라디오 버튼의 값을 변경하는 핸들러
+    const handleChange = (event) => {
+        setSelectValue(event.target.value);
+    }
 
+    // 글 작성부분(react-quill 에디터 사용)
     const [value, setValue] = useState('');
     // 사용하고 싶은 옵션, 나열 되었으면 하는 순서대로 나열
     const toolbarOptions = [
@@ -35,23 +43,36 @@ function DiaryAdd(){
         toolbar: {
           container: toolbarOptions,
         },
-      };
-      
+    }; 
     
+    
+    // 버튼부분
+    const navigate = useNavigate();
+
+    const backClick = () => {
+        navigate("/diary");
+    };
+
     return(
         <>
             <table className="add_table">
                 <tr>
                     <th>날짜</th>
-                    <td><input type="text" className="add_textBox"/></td>
+                    <td><DateCalendar/></td>
                     <th>오늘의 기분</th>
                     <td>
-                        <input type="radio" />
-                        <input type="radio" />
-                        <input type="radio" />
-                        <input type="radio" />
-                        <input type="radio" />
-                        <input type="radio" />
+                        {/* <input type="radio" name="today_mood" /> */}
+                        {['https://cdn-icons-png.flaticon.com/128/983/983018.png','https://cdn-icons-png.flaticon.com/128/983/983031.png','https://cdn-icons-png.flaticon.com/128/982/982995.png','https://cdn-icons-png.flaticon.com/128/983/983005.png','https://cdn-icons-png.flaticon.com/128/983/983022.png'].map((option, index) => (
+                            <>
+                                <input
+                                    className="mood_icon-div"
+                                    type="radio"
+                                    name="today_mood"
+                                    id={`${index}`}
+                                />
+                                <label className="mood_icon-label" htmlFor={`${index}`}><img src={option}/></label>
+                            </>
+                        ))}
                     </td>
                 </tr>
                 <tr>
@@ -60,17 +81,10 @@ function DiaryAdd(){
                 </tr>
             </table>
 
-            <ReactQuill
-                style={{ height: "650px"}}
-                value={value || ""} 
-                onChange={setValue}
-                theme="snow" 
-                modules={modules}
-                formats={formats}
-            />
+            <QuillEditor/>
             <div className="btn_container">
                 <button className="insert_btn">등록하기</button>
-                <button onClick={onClick} className="back_btn">뒤로가기</button>
+                <button onClick={backClick} className="back_btn">뒤로가기</button>
             </div>
         </>
     )
