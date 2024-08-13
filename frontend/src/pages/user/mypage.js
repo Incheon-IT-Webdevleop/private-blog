@@ -6,16 +6,17 @@ const MyPage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const token = useSelector((state) => state.auth.token);
   const user = useSelector(state => state.auth.user)
-  setUserInfo(user);
+
+
   useEffect(() => {
-    console.log(user);
+
     
   }, [token]);
 
   return (
     <div>
       <h1>마이페이지</h1>
-      <p>이메일: {userInfo.id}</p>
+      {/* <p>이메일: {userInfo.id}</p> */}
       {/* 기타 사용자 정보 표시 */}
     </div>
   );
