@@ -9,6 +9,7 @@ export default function SideBar() {
                 <p>Private Blog</p>
                 <nav>
                     <NavLink to="/movie" activeClassName="active-link">영화</NavLink>
+                    <NavLink to="/diary" activeClassName="active-link">일기</NavLink>
                 </nav>
             </div>
         

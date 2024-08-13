@@ -107,9 +107,10 @@ public class UserServiceImpl implements UserService{
 
         user.changePassword(dto.getPwd());
         userRepository.save(user);
-
-        return false;
+        return true;
     }
+
+
 
     // 이메일 보내는 함수
     private void sendEmail(String userEmail, String certificationNumber) {
