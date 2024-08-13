@@ -58,9 +58,11 @@ function App() {
          <SideBar/>
         <Routes>
           <Route path="/signup" element={<Signup />} />
-          <Route path="/review" element={
+          <Route element={<PrivateRoute path="/review">
             <Review />
-          }/>
+          </PrivateRoute>}/>
+          
+          
           <Route path="/movie" element={<Movie />} />
          
           <Route 
@@ -68,14 +70,8 @@ function App() {
             element={
               // PrivateRoute란 인증이 필요한, 즉 로그인을 했을 때
               // 접근 가능하도록 세팅을 할 수 있다.
-
-           
-
               <PrivateRoute path='/mypage'>
-                {/* <Route path="/review" element={<Review />} /> */}
-             
-
-                
+                {/* <Route path="/review" element={<Review />} /> */}            
                 <MyPage />
               </PrivateRoute>
             }/>

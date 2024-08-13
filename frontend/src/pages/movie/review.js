@@ -3,8 +3,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './review.css';
 import AWS from 'aws-sdk';
-import { useSelector } from 'react-redux';
-
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -18,8 +16,7 @@ const genres = [
   '액션', '코미디', '드라마', '공포', 'SF', '로맨스', '스릴러', '애니메이션'
 ];
 
-const MovieReviewEditor = async() => {
-  
+const MovieReviewEditor = () => {
   const [title, setTitle] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [content, setContent] = useState('');
@@ -52,7 +49,6 @@ const MovieReviewEditor = async() => {
   };
 
   const imageHandler = useCallback(() => {
-    
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
@@ -98,7 +94,6 @@ const MovieReviewEditor = async() => {
     console.log(reviewData);
   
     try {
-        
       const response = await fetch('/api/reviews', {
         method: 'POST',
         headers: {
@@ -119,7 +114,6 @@ const MovieReviewEditor = async() => {
 
   return (
     <div className="editor-container">
-
       <input 
         type="text" 
         className="input"
@@ -129,7 +123,6 @@ const MovieReviewEditor = async() => {
       />
       
       <div className="genre-container">
-      
         {genres.map(genre => (
           <div className="genre-checkbox" key={genre}>
             <input 
@@ -142,6 +135,7 @@ const MovieReviewEditor = async() => {
           </div>
         ))}
       </div>
+
       <ReactQuill
         ref={quillRef}
         value={content}
