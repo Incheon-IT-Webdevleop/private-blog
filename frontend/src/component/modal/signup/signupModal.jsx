@@ -90,6 +90,7 @@ export default function SignUpModal({ onClose }) {
                             setDuplicate={setDuplicate}
                             certification={certification}
                             setCertification={setCertification}
+                            type={"signup"}
                         />
 
                         <div className="input-container">

@@ -34,4 +34,6 @@ public interface UserService {
      * @param  userEmail, certificationNumber
      */
     boolean verifyEmail(String userEmail, String certificationNumber);
+
+    boolean changePwd(AuthDto.ChangePwdDto dto);
 }

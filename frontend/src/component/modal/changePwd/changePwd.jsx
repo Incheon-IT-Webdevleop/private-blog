@@ -17,14 +17,17 @@ export default function ChangePwd( {onClose, email} ){
                     setPwdError("비밀번호는 영어 + 숫자 8~20자리 입니다.");
                 } else {
                     setPwdError('');
+                    setError('')
                 }
                 break;
             case "checkPassword":
                 setNewPwdCheck(value);
                 if (value !== newPwd) {
                     setError("비빌번호와 비밀번호 확인이 다릅니다.");
+                    setPwdError('');
                 } else {
                     setError("");
+                    setPwdError('')
                 }
                 break;
             default:
@@ -42,7 +45,7 @@ export default function ChangePwd( {onClose, email} ){
         }
 
         try {
-            await axios.patch('/api/auth/change-pwd', { email ,newPwd, newPwdCheck }, {
+            await axios.patch('/api/auth/change-pwd', { email ,pwd: newPwd, pwdCheck: newPwdCheck }, {
                 headers: { 'Content-Type': 'application/json' },
             });
             onClose();

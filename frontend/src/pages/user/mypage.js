@@ -9,23 +9,11 @@ const MyPage = () => {
   
   useEffect(() => {
 
-    fetchUserInfo();
+
     console.log(user)
   }, [token]);
 
-  const fetchUserInfo = async () => {
-    try {
-      const response = await axios.get('/api/mypage/info', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      console.log("토큰으로 받아온 데이터 : " + response.data);
-      setUserInfo(response.data);
-    } catch (error) {
-      console.error('Failed to fetch user info:', error);
-    }
-  };
+
 
   return (
     <div>

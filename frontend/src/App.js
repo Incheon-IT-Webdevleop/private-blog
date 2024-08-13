@@ -27,10 +27,10 @@ function App() {
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem('accessToken');
-      console.log("로컬 토큰 :  " + token);
+      // console.log("로컬 토큰 :  " + token);
       if (token) {
         const { isValid, user } = await validateToken(token);
-        console.log("인증 여부 : " + isValid);
+        // console.log("인증 여부 : " + isValid);
         console.log(user);
         if (isValid) {
           dispatch(initializeUser({ user, token }));

@@ -77,7 +77,7 @@ public class AuthApiController {
                 .header(HttpHeaders.SET_COOKIE, httpCookie.toString())
                 // AT 저장
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAccessToken())
-                .body(userDto);
+                .build();
     }
 
     /**
@@ -128,7 +128,7 @@ public class AuthApiController {
                     .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                     // AT 저장
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + reissuedTokenDto.getAccessToken())
-                    .body(userInfo);
+                    .build();
 
         } else { // Refresh Token 탈취 가능성
             // Cookie 삭제 후 재로그인 유도
@@ -177,6 +177,7 @@ public class AuthApiController {
     public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String requestAccessToken) {
         String token = requestAccessToken.replace("Bearer ", "").trim();
         UserDto userInfo = authService.getUserInfo(token);
+        log.info("userInfo : " + userInfo);
         if (!authService.isValidUser(token, userInfo.getIdx())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -252,9 +253,11 @@ public class AuthApiController {
     @PatchMapping("/change-pwd")
     public ResponseEntity<?> changePwd(@RequestBody AuthDto.ChangePwdDto dto){
         log.info("dto : " + dto);
+        log.info("pwd : " + dto.getPwd());
         if(!dto.getPwd().equals(dto.getPwdCheck())){
             return ResponseEntity.badRequest().body("fail");
         }
+        userService.changePwd(AuthDto.ChangePwdDto.encodePassword(dto, encoder.encode(dto.getPwd())));
         return ResponseEntity.ok("success");
     }
 

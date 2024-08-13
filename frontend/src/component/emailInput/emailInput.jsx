@@ -3,7 +3,7 @@ import axios from 'axios';
 import Error from '../error_message/error';
 
 
-export default function EmailInput({email, setEmail, setEmailState, emailError, setEmailError, duplicate, setDuplicate, certification, setCertification}) {
+export default function EmailInput({email, setEmail, setEmailState, emailError, setEmailError, duplicate, setDuplicate, certification, setCertification, type}) {
     const [certificationMessage, setCertificationMessage] = useState('');
     const [certificationNumber, setCertificationNumber] = useState('');
     const [certificationNumberState, setCertificationNumberState] = useState(false);
@@ -59,6 +59,10 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
     };
 
     const checkEmailDuplicate = async (email) => {
+        if(type==="find"){
+            setEmailError("");
+            return;
+        }
         try {
             const res = await axios.post('/api/auth/check-email', { email }, {
                 headers: {
@@ -86,10 +90,11 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
         e.preventDefault();
         setCertificationMessage('');
         setCertificationNumber('');
-
-        if (!duplicate || emailError) {
-            setEmailError("이메일을 입력 후 진행해주세요.");
-            return;
+        if(type!=="find"){
+            if (!duplicate || emailError) {
+                setEmailError("이메일을 입력 후 진행해주세요.");
+                return;
+            }
         }
         setCertificationMessage("인증 메일 보내는 중..");
         setCertificationNumberState(true);
