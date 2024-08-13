@@ -7,23 +7,10 @@ const MyPage = () => {
   const token = useSelector((state) => state.auth.token);
   const user = useSelector(state => state.auth.user)
   setUserInfo(user);
-  // useEffect(() => {
-  //   const fetchUserInfo = async () => {
-  //     try {
-  //       const response = await axios.get('/api/mypage/info', {
-  //         headers: {
-  //           'Authorization': `Bearer ${token}`
-  //         }
-  //       });
-  //       console.log("토큰으로 받아온 데이터 : " + response.data.idx);
-  //       setUserInfo(response.data);
-  //     } catch (error) {
-  //       console.error('Failed to fetch user info:', error);
-  //     }
-  //   };
-
-  //   fetchUserInfo();
-  // }, [token]);
+  useEffect(() => {
+    console.log(user);
+    
+  }, [token]);
 
   return (
     <div>
