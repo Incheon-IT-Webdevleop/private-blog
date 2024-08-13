@@ -1,8 +1,10 @@
 import React, { useState, useRef, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import './review.css'; // CSS 파일을 불러옵니다.
+import './review.css';
 import AWS from 'aws-sdk';
+import { useSelector } from 'react-redux';
+
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -17,8 +19,8 @@ const genres = [
 ];
 
 const MovieReviewEditor = () => {
+
   const [title, setTitle] = useState('');
-  const [rating, setRating] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [content, setContent] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]);
@@ -31,7 +33,7 @@ const MovieReviewEditor = () => {
         : [...prevGenres, genre]
     );
   };
-
+  
   const uploadImage = async (file) => {
     const params = {
       Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
@@ -50,6 +52,7 @@ const MovieReviewEditor = () => {
   };
 
   const imageHandler = useCallback(() => {
+    
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
@@ -67,7 +70,7 @@ const MovieReviewEditor = () => {
       }
     };
   }, []);
-
+ 
   const modules = {
     toolbar: {
       container: [
@@ -86,18 +89,37 @@ const MovieReviewEditor = () => {
   const handleSubmit = async () => {
     const reviewData = {
       title,
-      rating,
       genres: selectedGenres,
       content,
-      images: uploadedImages
+      images: uploadedImages,
+      memberIdx: 1 // 예를 들어, 현재 로그인한 사용자의 ID를 여기에 넣습니다.
     };
-
-    console.log('리뷰 데이터:', reviewData);
-    // 여기에 서버로 데이터를 보내는 로직을 추가하세요
+  
+    console.log(reviewData);
+  
+    try {
+        
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData),
+      });
+  
+      if (response.ok) {
+        console.log('리뷰가 성공적으로 저장되었습니다.');
+      } else {
+        console.error('리뷰 저장 실패:', response.statusText);
+      }
+    } catch (error) {
+      console.error('서버 오류:', error);
+    }
   };
 
   return (
     <div className="editor-container">
+
       <input 
         type="text" 
         className="input"
@@ -105,17 +127,9 @@ const MovieReviewEditor = () => {
         value={title} 
         onChange={(e) => setTitle(e.target.value)}
       />
-      <select 
-        className="select"
-        value={rating} 
-        onChange={(e) => setRating(e.target.value)}
-      >
-        <option value="">평점 선택</option>
-        {[1, 2, 3, 4, 5].map(score => (
-          <option key={score} value={score}>{score}점</option>
-        ))}
-      </select>
+     
       <div className="genre-container">
+      
         {genres.map(genre => (
           <div className="genre-checkbox" key={genre}>
             <input 
