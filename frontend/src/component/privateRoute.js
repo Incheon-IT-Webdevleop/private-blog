@@ -36,9 +36,8 @@ const PrivateRoute = ({ children }) => {
         // 토큰 검증
         // auth.js에 있다
         setIsValidToken(isValid);
-        // console.log()
         if(isValid){
-          dispatch(initializeUser({ user, token }));
+          dispatch(initializeUser({ user:user, token }));
          
           // console.log("세팅");
         }else{

@@ -264,7 +264,7 @@ public class AuthServiceImpl implements AuthService{
 
 /**
  * Refresth Token(이하 RT)과 Access Token(이하 AT)를 다루기 위해 생성한 Service단 클래스이다.
- * 코드를 이렇게 작성한 이유와 주석 외의 추가 설명이 필요하다고 생각되는 부분을 적어보겠다.
+ * 코드를 이렇게 작성한 이유와 주석 외의 추가 설명이 필요하다고 생각되는 부분을 적어   보겠다.
  *
  * 큰 틀은 이렇게 된다.
  *

@@ -22,7 +22,7 @@ export const validateToken = async (token) => {
       // console.log(response);
       
       const user = await findUser(token);
-      console.log(user);
+      // console.log(user);
       return { isValid: true, user:user };
     }
     return { isValid: false, user: null };
@@ -50,8 +50,6 @@ const reissueToken = async (expiredToken) => {
       localStorage.setItem('accessToken', newAccessToken);
       // 
       const user = findUser(newAccessToken);
-      
-
       return { isValid: true, user: user };
     } else {
       return { isValid: false, user: null };

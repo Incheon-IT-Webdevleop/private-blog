@@ -66,7 +66,7 @@ function App() {
           <Route path="/movie" element={<Movie />} />
          
           <Route 
-            path='/api/mypage/info' 
+            path='/mypage' 
             element={
               // PrivateRoute란 인증이 필요한, 즉 로그인을 했을 때
               // 접근 가능하도록 세팅을 할 수 있다.
