@@ -24,7 +24,7 @@ const PrivateRoute = ({ children }) => {
   useEffect(() => {
     // mount, update시 실행
     const checkToken = async () => {
-      const token = localStorage.getItem('accessToken');
+      
       console.log(token);
       if (token) {
         // await : 비동기 통신을 할 때 await뒤에 있는 함수가 끝날때까지
@@ -42,11 +42,10 @@ const PrivateRoute = ({ children }) => {
          
           // console.log("세팅");
         }else{
+
           dispatch(clearUser());
           setShowLoginModal(true);
         }
-        // console.log(user);
-        // console.log(token);
       } else {
         setIsValidToken(false);
         setShowLoginModal(true);
