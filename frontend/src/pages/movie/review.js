@@ -18,8 +18,8 @@ const genres = [
   '액션', '코미디', '드라마', '공포', 'SF', '로맨스', '스릴러', '애니메이션'
 ];
 
-const MovieReviewEditor = () => {
-
+const MovieReviewEditor = async() => {
+  
   const [title, setTitle] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [content, setContent] = useState('');
@@ -127,7 +127,7 @@ const MovieReviewEditor = () => {
         value={title} 
         onChange={(e) => setTitle(e.target.value)}
       />
-     
+      
       <div className="genre-container">
       
         {genres.map(genre => (
