@@ -72,4 +72,26 @@ public class AuthDto {
             this.refreshToken = refreshToken;
         }
     }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ChangePwdDto{
+        private String email;
+        private String pwd;
+        private String pwdCheck;
+
+        @Builder
+        public ChangePwdDto(String email, String pwd, String pwdCheck){
+            this.email = email;
+            this.pwd = pwd;
+            this.pwdCheck = pwdCheck;
+        }
+
+        public static ChangePwdDto encodePassword(ChangePwdDto changePwdDto, String encodedPassword) {
+            ChangePwdDto newChangePwdDto = new ChangePwdDto();
+            newChangePwdDto.email = changePwdDto.getEmail();
+            newChangePwdDto.pwd = encodedPassword;
+            return newChangePwdDto;
+        }
+    }
 }

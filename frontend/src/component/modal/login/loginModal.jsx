@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './loginModal.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { initializeUser, setUser } from '../../../store/authSlice';
 import FindModal from '../find/findModal';
 import SignUpModal from '../signup/signupModal';
 
-export default function LoginModal() {
+export default function LoginModal({onClose}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [modalType, setModalType] = useState(null); // 모달 타입 상태 추가
+    const loginedUser = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (loginedUser) {
+            onClose(); // 유저 정보가 있을 때 모달 닫기
+        }
+    }, [loginedUser, onClose]);
+    
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -37,9 +45,10 @@ export default function LoginModal() {
             });
             const accessToken = res.headers['authorization'].split(' ')[1];
             localStorage.setItem('accessToken', accessToken);
-            const user = res.data.user;
+            const user = res.data;
+            console.log(user)
             dispatch(setUser({ user, token: accessToken }));
-            dispatch(initializeUser({ user, token: accessToken }));
+            onClose();
             console.log("로그인성공")
         } catch (e) {
             setError('아이디나 비밀번호를 확인해주세요.');
@@ -52,6 +61,7 @@ export default function LoginModal() {
     const closeModal = () => setModalType(null);
 
     return (
+        
         <div className="modal-overlay">
             <div className="modal-content">
                 <div className='title'>
@@ -60,12 +70,12 @@ export default function LoginModal() {
                 <div className="input-group">
                     <form onSubmit={submitHandler}>
                         <div className="input-container">
-                            <input type='email' name='email' className='input' value={email} id='email'
+                            <input type='email' name='email' className='input1' value={email} id='email'
                                 onChange={(e) => setEmail(e.target.value)} />
                             <label className={`label ${email ? 'shrink' : ''}`} htmlFor="email">이메일</label>
                         </div>
                         <div className="input-container">
-                            <input type='password' name='password' className='input' value={password} id='password'
+                            <input type='password' name='password' className='input1' value={password} id='password'
                                 onChange={(e) => setPassword(e.target.value)} />
                             <label className={`label ${password ? 'shrink' : ''}`} htmlFor="password">비밀번호</label>
                         </div>

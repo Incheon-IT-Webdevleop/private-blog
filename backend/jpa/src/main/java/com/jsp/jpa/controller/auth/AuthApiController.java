@@ -4,6 +4,7 @@ import com.jsp.jpa.dto.auth.AuthDto;
 import com.jsp.jpa.dto.auth.UserDto;
 import com.jsp.jpa.dto.mail.SendCertificationEmailRequest;
 import com.jsp.jpa.dto.mail.VerifyEmailRequest;
+import com.jsp.jpa.repository.user.UserRepository;
 import com.jsp.jpa.service.auth.AuthServiceImpl;
 import com.jsp.jpa.service.auth.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -60,6 +61,7 @@ public class AuthApiController {
         if(loginDto.getEmail().isEmpty() || loginDto.getPassword().isEmpty()){
             return ResponseEntity.badRequest().body("empty");
         }
+
         AuthDto.TokenDto tokenDto = authService.login(loginDto);
 
         // RT 저장
@@ -84,8 +86,10 @@ public class AuthApiController {
      */
     @PostMapping("/validate")
     public ResponseEntity<?> validate(@RequestHeader("Authorization") String requestAccessToken) {
+
         if (!authService.validate(requestAccessToken)) {
-            return ResponseEntity.status(HttpStatus.OK).build(); // 재발급 필요X
+            String token = requestAccessToken.replace("Bearer ", "").trim();
+            return ResponseEntity.status(HttpStatus.OK).body("success"); // 재발급 필요X
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 재발급 필요
         }
@@ -114,6 +118,9 @@ public class AuthApiController {
                     .httpOnly(true)
                     .secure(true)
                     .build();
+
+            String token = reissuedTokenDto.getAccessToken().replace("Bearer ", "").trim();
+            UserDto userInfo = authService.getUserInfo(token);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
@@ -168,6 +175,7 @@ public class AuthApiController {
     public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String requestAccessToken) {
         String token = requestAccessToken.replace("Bearer ", "").trim();
         UserDto userInfo = authService.getUserInfo(token);
+        log.info("userInfo : " + userInfo);
         if (!authService.isValidUser(token, userInfo.getIdx())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -233,6 +241,37 @@ public class AuthApiController {
             return ResponseEntity.status(400).body("fail");
         }
 
+    }
+
+    /**
+     * 비밀번호 변경
+     * @param dto
+     * @return
+     */
+    @PatchMapping("/change-pwd")
+    public ResponseEntity<?> changePwd(@RequestBody AuthDto.ChangePwdDto dto){
+        log.info("dto : " + dto);
+        log.info("pwd : " + dto.getPwd());
+        if(!dto.getPwd().equals(dto.getPwdCheck())){
+            return ResponseEntity.badRequest().body("fail");
+        }
+        userService.changePwd(AuthDto.ChangePwdDto.encodePassword(dto, encoder.encode(dto.getPwd())));
+        return ResponseEntity.ok("success");
+    }
+
+    @DeleteMapping("/sign-out")
+    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String requestAccessToken){
+        authService.signOut(requestAccessToken);
+
+        ResponseCookie responseCookie = ResponseCookie.from("refresh-token", "")
+                .maxAge(0)
+                .path("/")
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .build();
     }
 
 }

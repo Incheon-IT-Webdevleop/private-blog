@@ -93,4 +93,10 @@ public interface AuthService {
     UserDto getUserInfo(String token);
 
     boolean isValidUser(String token, int idx);
+
+    /**
+     * 회원 탈퇴
+     * @param requestAccessToken
+     */
+    void signOut(String requestAccessToken);
 }

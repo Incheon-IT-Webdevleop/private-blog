@@ -29,10 +29,11 @@ export default function FindModal({ onClose }) {
                         setDuplicate={setDuplicate}
                         certification={certification}
                         setCertification={setCertification}
+                        type={"find"}
                     />
             </div>
             {/* 이메일 인증 성공 시 비밀번호 변경 모달이 떠야한다. */}
-            {certification && (<div> <ChangePwd /> </div>)}
+            {certification && (<div> <ChangePwd onClose={onClose} email={email}/> </div>)}
             
         </div>
     );
