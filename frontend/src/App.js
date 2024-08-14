@@ -58,7 +58,7 @@ function App() {
          <SideBar/>
         <Routes>
           <Route path="/signup" element={<Signup />} />
-          <Route element={<PrivateRoute path="/review">
+          <Route path="/review" element={<PrivateRoute >
             <Review />
           </PrivateRoute>}/>
           
