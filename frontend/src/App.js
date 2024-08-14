@@ -76,8 +76,8 @@ function App() {
               </PrivateRoute>
             }/>
           {/* <Route path="*" element={<Navigate to="/login" />} /> */}
-          <Route path='/diary' element={<Diary />} />
-          <Route path='/diaryadd' element={<DiaryAdd />} />
+          <Route path='/diary' element={<PrivateRoute><Diary /></PrivateRoute>} />
+          <Route path='/diaryadd' element={<PrivateRoute><DiaryAdd /></PrivateRoute>} />
         </Routes>
         {showLoginModal && <LoginModal onClose={closeLoginModal} />} {/* 로그인 모달 추가 */}
       </Router>
