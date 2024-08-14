@@ -118,7 +118,7 @@ const DiaryAdd = () => {
   };
 
   return (
-    <div>
+    <div className='container'>
       <table className="add_table">
           <tr>
               <th>날짜</th>

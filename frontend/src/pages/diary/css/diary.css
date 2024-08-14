@@ -1,3 +1,18 @@
+.test{
+    margin : 100px 0 0 50px;
+
+}
+
+.test2{
+    display: flex;
+    justify-content: center;
+}
+
+.container{
+    padding: 20px;
+    margin-left: 300px; /* SideBar의 너비만큼 여백 */
+}
+
 /* ./diary.js */
 .add_btn{
     width: 130px;
@@ -17,7 +32,7 @@
 /* react-calendar 커스텀 */
 /* 캘린더 전체 위치 및 크기 */
 .react-calendar {
-    width: 70%;
+    width: 50%;
     height: 800px;
     background: white;
     border: 1px solid #a0a096;
@@ -25,7 +40,7 @@
     box-shadow: 0px 0px 10px #bebebe;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.125em;
-    margin : 100px auto 0 auto;
+    margin : 100px 50px 0 300px;
 }
 
 .diaryImg{
