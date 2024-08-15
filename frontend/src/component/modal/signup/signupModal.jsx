@@ -33,6 +33,7 @@ export default function SignUpModal({ onClose }) {
         try {
             await axios.post('/api/auth/signup', { email, password }, {
                 headers: { 'Content-Type': 'application/json' },
+                
             });
             onClose();
         } catch (e) {

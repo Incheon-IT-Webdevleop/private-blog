@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './review.css';
 import AWS from 'aws-sdk';
+import { useSelector } from 'react-redux';
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -13,11 +14,15 @@ AWS.config.update({
 const s3 = new AWS.S3();
 
 const genres = [
-  '액션', '코미디', '드라마', '공포', 'SF', '로맨스', '스릴러', '애니메이션'
+  1, 2, 3, 4, 5, 6, 7, 8
 ];
 
 const MovieReviewEditor = () => {
   const [title, setTitle] = useState('');
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector(state => state.auth.user)
+ 
+  
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [content, setContent] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]);
@@ -30,7 +35,7 @@ const MovieReviewEditor = () => {
         : [...prevGenres, genre]
     );
   };
-  
+
   const uploadImage = async (file) => {
     const params = {
       Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
@@ -66,7 +71,7 @@ const MovieReviewEditor = () => {
       }
     };
   }, []);
- 
+
   const modules = {
     toolbar: {
       container: [
@@ -84,17 +89,14 @@ const MovieReviewEditor = () => {
 
   const handleSubmit = async () => {
     const reviewData = {
-      title,
-      genres: selectedGenres,
-      content,
-      images: uploadedImages,
-      memberIdx: 1 // 예를 들어, 현재 로그인한 사용자의 ID를 여기에 넣습니다.
+      reviewTitle : title,
+      reviewContent : content,
+      
+      memberIdx:  user.idx
     };
-  
-    console.log(reviewData);
-  
+    
     try {
-      const response = await fetch('/api/reviews', {
+      const response = await fetch('/api/auth/review', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +123,7 @@ const MovieReviewEditor = () => {
         value={title} 
         onChange={(e) => setTitle(e.target.value)}
       />
-      
+ 
       <div className="genre-container">
         {genres.map(genre => (
           <div className="genre-checkbox" key={genre}>
@@ -135,7 +137,6 @@ const MovieReviewEditor = () => {
           </div>
         ))}
       </div>
-
       <ReactQuill
         ref={quillRef}
         value={content}
