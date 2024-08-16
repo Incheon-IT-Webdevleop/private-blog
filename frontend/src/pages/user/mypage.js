@@ -6,7 +6,7 @@ const MyPage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const token = useSelector((state) => state.auth.token);
   const user = useSelector(state => state.auth.user)
-
+  console.log(user)
 
   useEffect(() => {
 
