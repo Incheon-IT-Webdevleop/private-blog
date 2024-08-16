@@ -20,6 +20,7 @@ import Movie from './pages/movie/movie';
 import SideBar from './pages/sidebar/sidebar';
 import Review from './pages/movie/review';
 import LoginModal from './component/modal/login/loginModal';
+import MovieDetail from './pages/movie/movieDetail';
 
 
 function App() {
@@ -60,6 +61,9 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/review" element={<PrivateRoute >
             <Review />
+          </PrivateRoute>}/>
+          <Route path="/reviews/:id" element={<PrivateRoute >
+            <MovieDetail />
           </PrivateRoute>}/>
           
           
