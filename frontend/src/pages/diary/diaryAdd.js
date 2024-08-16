@@ -1,11 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react';
 import ReactQuill from 'react-quill';
-import { useNavigate } from 'react-router-dom';
+import { Await, useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-quill/dist/quill.snow.css';
 import './css/diary.css'
 import AWS from 'aws-sdk';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -22,11 +24,13 @@ const DiaryAdd = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const quillRef = useRef(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector(state => state.auth.user)
 
   const uploadImage = async (file) => {
     const params = {
       Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
-      Key: `movie-posters/${Date.now()}_${file.name}`,
+      Key: `image/${Date.now()}_${file.name}`,
       Body: file,
       ACL: 'public-read',
     };
@@ -83,18 +87,38 @@ const DiaryAdd = () => {
 
   const handleSubmit = async () => {
     const Data = {
-      title,
-      selectedDate,
-      mode,
-      content
+      member_idx : user.idx,
+      diary_date : selectedDate,
+      diary_emoji : mode,
+      diary_title : title,
+      diary_content : content
     };
 
     console.log('데이터:', Data);
-    // 여기에 서버로 데이터를 보내는 로직을 추가하세요
+
+    try {
+      const response = await fetch('/api/auth/diaryInsert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Data),
+      });
+      
+      navigate('/diary')
+      // if (response.ok) {
+      //   console.log('리뷰가 성공적으로 저장되었습니다.');
+
+      // } else {
+      //   console.error('리뷰 저장 실패:', response.statusText);
+      // }
+    } catch (error) {
+      console.error('서버 오류:', error);
+    }
   };
 
   return (
-    <div>
+    <div className='container'>
       <table className="add_table">
           <tr>
               <th>날짜</th>
