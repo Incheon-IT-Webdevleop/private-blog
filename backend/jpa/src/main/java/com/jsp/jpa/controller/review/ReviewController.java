@@ -32,4 +32,11 @@ public class ReviewController {
     public List<Review> getMyReviews(@RequestBody ReviewDto request) {
         return reviewRepository.findByMemberIdx(request.getMemberIdx());
     }
+
+    @DeleteMapping("/reviews/{id}")
+    public void deleteReview(@PathVariable("id") Long id) {
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("리뷰를 찾을 수 없습니다. id: " + id));
+        reviewRepository.delete(review);
+    }
 }

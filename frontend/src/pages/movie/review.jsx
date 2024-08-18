@@ -108,6 +108,7 @@ const MovieReviewEditor = () => {
   
       if (response.ok) {
         console.log('리뷰가 성공적으로 저장되었습니다.');
+        navigate('/movie'); 
       } else {
         console.error('리뷰 저장 실패:', response.statusText);
       }

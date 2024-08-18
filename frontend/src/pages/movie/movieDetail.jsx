@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import parse from 'html-react-parser';  // html-react-parser 임포트
+import parse from 'html-react-parser';
 import '../movie/movieDetail.css';
+
 const genres = {
     1: '액션',
     2: '코미디',
@@ -13,18 +14,19 @@ const genres = {
     6: '판타지',
     7: '로맨스',
     8: '스릴러'
-  };
+};
 
 export default function MovieDetail() {
-    const { id } = useParams();  // URL에서 id 추출
-    const [review, setReview] = useState(null);  // 리뷰 데이터를 저장할 상태
-    const token = useSelector((state) => state.auth.token);  // Redux에서 토큰 가져오기
+    const { id } = useParams();
+    const [review, setReview] = useState(null);
+    const token = useSelector((state) => state.auth.token);
+    const navigate = useNavigate(); // useNavigate 훅을 사용하여 페이지 이동을 처리
 
     useEffect(() => {
-        if (token) {  // 토큰이 있는 경우에만 요청을 보냄
+        if (token) {
             axios.get(`/api/auth/reviews/${id}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`  // 요청 헤더에 토큰 포함
+                    'Authorization': `Bearer ${token}`
                 }
             })
             .then(response => {
@@ -34,22 +36,44 @@ export default function MovieDetail() {
                 console.error("리뷰를 불러오는 중 오류가 발생했습니다!", error);
             });
         } else {
-            console.error("토큰이 존재하지 않습니다.");  // 토큰이 없는 경우 오류 로그
+            console.error("토큰이 존재하지 않습니다.");
         }
     }, [id, token]);
 
+    const handleDelete = () => {
+        if (window.confirm("정말로 이 리뷰를 삭제하시겠습니까?")) {
+            axios.delete(`/api/auth/reviews/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                alert("리뷰가 삭제되었습니다.");
+                navigate('/movie'); // 삭제 후 홈 페이지로 이동
+            })
+            .catch(error => {
+                console.error("리뷰를 삭제하는 중 오류가 발생했습니다!", error);
+            });
+        }
+    };
+
     if (!review) {
-        return <p>리뷰를 불러오는 중입니다...</p>;  // 리뷰 데이터가 없을 때 로딩 메시지
+        return <p>리뷰를 불러오는 중입니다...</p>;
     }
+
     const genreName = genres[review.reviewCategory] || '없음';
+
     return (
         <div className="review-detail-container">
             <h1>{review.reviewTitle}</h1>
             <p>{new Date(review.reviewDate).toLocaleDateString()}</p>
             <p>장르: {genreName}</p>
             <div className="review-content">
-                {parse(review.reviewContent)} 
+                {parse(review.reviewContent)}
             </div>
+            <button className="delete-button" onClick={handleDelete}>
+                삭제
+            </button>
         </div>
     );
 }
