@@ -40,6 +40,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailerHandler oAuth2FailerHandler;
     private final CustomAuthenticationEntryPoint customOAuth2AuthenticationEntryPoint;
 
     @Bean
@@ -100,7 +101,7 @@ public class SecurityConfig {
                         // 로그인 성공 시 핸들러
                         .successHandler(oAuth2SuccessHandler)
                         // 실패시 핸들러
-                        .failureHandler(customOAuth2AuthenticationEntryPoint::commence)
+                        .failureHandler(oAuth2FailerHandler)
                 )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

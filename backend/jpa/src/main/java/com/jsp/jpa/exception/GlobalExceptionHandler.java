@@ -15,7 +15,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOAuth2ProviderMismatchException(OAuth2ProviderMismatchException ex) {
         ErrorResponse errorResponse = new ErrorResponse("EMAIL_ALREADY_IN_USE", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-    }
-
-    // 다른 예외 처리기를 여기에 추가할 수 있습니다.
+    }// 다른 예외 처리기를 여기에 추가할 수 있습니다.
 }

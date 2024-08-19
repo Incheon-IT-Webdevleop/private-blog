@@ -91,7 +91,7 @@ export default function LoginModal({onClose, errorMessage, source}) {
         
         <div className="modal-overlay">
             <div className="modal-content">
-                <div className='title'>
+                <div className='title1'>
                     <h2>로그인</h2>
                 </div>
                 <div className="input-group">
