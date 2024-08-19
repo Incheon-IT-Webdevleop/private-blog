@@ -83,8 +83,9 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**", "/login/oauth2/code/**", "/oauth2/**","/favicon.ico").permitAll()
-                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers("/api/auth/**", "/login/oauth2/code/**", "/oauth2/**","/favicon.ico").permitAll().requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers("/api/auth/my-reviews").authenticated()
+                        .requestMatchers("/api/auth//reviews/**").authenticated()
                         .requestMatchers("/api/mypage/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
 

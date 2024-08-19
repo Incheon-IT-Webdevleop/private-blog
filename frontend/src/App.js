@@ -22,6 +22,7 @@ import Review from './pages/movie/review';
 import LoginModal from './component/modal/login/loginModal';
 import OAuth2RedirectHandler from './component/oauth2/OAuth2RedirectHandler';
 
+import MovieDetail from './pages/movie/movieDetail';
 
 
 function App() {
@@ -64,6 +65,9 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/review" element={<PrivateRoute >
             <Review />
+          </PrivateRoute>}/>
+          <Route path="/reviews/:id" element={<PrivateRoute >
+            <MovieDetail />
           </PrivateRoute>}/>
           
           

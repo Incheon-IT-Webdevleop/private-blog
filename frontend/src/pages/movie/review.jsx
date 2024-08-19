@@ -4,6 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import './review.css';
 import AWS from 'aws-sdk';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -13,36 +14,38 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+// 장르와 번호를 매핑하는 객체
 const genres = [
-  1, 2, 3, 4, 5, 6, 7, 8
+  { id: 1, name: '액션' },
+  { id: 2, name: '코미디' },
+  { id: 3, name: '드라마' },
+  { id: 4, name: '호러' },
+  { id: 5, name: 'SF' },
+  { id: 6, name: '판타지' },
+  { id: 7, name: '로맨스' },
+  { id: 8, name: '스릴러' }
 ];
 
 const MovieReviewEditor = () => {
   const [title, setTitle] = useState('');
   const token = useSelector((state) => state.auth.token);
-  const user = useSelector(state => state.auth.user)
- 
+  const user = useSelector(state => state.auth.user);
   
-  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState('');
   const [content, setContent] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]);
   const quillRef = useRef(null);
+  const navigate = useNavigate();
 
-  const handleGenreChange = (genre) => {
-    setSelectedGenres(prevGenres => 
-      prevGenres.includes(genre)
-        ? prevGenres.filter(g => g !== genre)
-        : [...prevGenres, genre]
-    );
-  };
 
-  const uploadImage = async (file) => {
+ const uploadImage = async (file) => {
     const params = {
       Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
       Key: `movie-posters/${Date.now()}_${file.name}`,
       Body: file,
       ACL: 'public-read',
     };
+ 
 
     try {
       const data = await s3.upload(params).promise();
@@ -89,10 +92,10 @@ const MovieReviewEditor = () => {
 
   const handleSubmit = async () => {
     const reviewData = {
-      reviewTitle : title,
-      reviewContent : content,
-      
-      memberIdx:  user.idx
+      reviewTitle: title,
+      reviewContent: content,
+      reviewCategory: parseInt(selectedGenre),  // 선택된 장르의 ID 목록을 전송
+      memberIdx: user.idx
     };
     
     try {
@@ -100,12 +103,14 @@ const MovieReviewEditor = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(reviewData),
       });
   
       if (response.ok) {
         console.log('리뷰가 성공적으로 저장되었습니다.');
+        navigate('/movie'); 
       } else {
         console.error('리뷰 저장 실패:', response.statusText);
       }
@@ -124,19 +129,17 @@ const MovieReviewEditor = () => {
         onChange={(e) => setTitle(e.target.value)}
       />
  
-      <div className="genre-container">
+      <select 
+        value={selectedGenre} 
+        onChange={(e) => setSelectedGenre(e.target.value)}
+        className="genre-select"
+      >
+        <option value="">장르 선택</option>
         {genres.map(genre => (
-          <div className="genre-checkbox" key={genre}>
-            <input 
-              type="checkbox" 
-              id={genre} 
-              checked={selectedGenres.includes(genre)}
-              onChange={() => handleGenreChange(genre)}
-            />
-            <label htmlFor={genre}>{genre}</label>
-          </div>
+          <option key={genre.id} value={genre.id}>{genre.name}</option>
         ))}
-      </div>
+      </select>
+
       <ReactQuill
         ref={quillRef}
         value={content}
