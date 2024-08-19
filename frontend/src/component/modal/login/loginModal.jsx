@@ -5,21 +5,30 @@ import axios from 'axios';
 import { initializeUser, setUser } from '../../../store/authSlice';
 import FindModal from '../find/findModal';
 import SignUpModal from '../signup/signupModal';
+import SocialLoginButton from '../../btn/socialLoginBtn';
 
-export default function LoginModal({onClose}) {
+export default function LoginModal({onClose, errorMessage, source}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [error, setError] = useState(errorMessage || '');
     const [modalType, setModalType] = useState(null); // 모달 타입 상태 추가
     const loginedUser = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
-
+    
     useEffect(() => {
         if (loginedUser) {
             onClose(); // 유저 정보가 있을 때 모달 닫기
         }
     }, [loginedUser, onClose]);
     
+    useEffect(() => {
+        if (errorMessage) {
+            console.log("Error message received:", errorMessage);  // 에러 메시지 로그 출력
+            setError(errorMessage); // 새로운 에러 메시지를 반영
+            console.log(error)
+            // localStorage.removeItem("errorMessage");
+        }
+    }, [error, source]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -60,6 +69,24 @@ export default function LoginModal({onClose}) {
     const signUpClickHandler = () => setModalType('signup');
     const closeModal = () => setModalType(null);
 
+    const handleSocialLogin = async (provider) => {
+        try {
+            window.location.href = `http://localhost:8082/oauth2/authorization/${provider}`;
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError(`${provider.charAt(0).toUpperCase() + provider.slice(1)} 로그인 중 오류가 발생했습니다.`);
+            }
+            console.error(`${provider} login error:`, error);
+        }
+    };
+
+
+
+    
+
+
     return (
         
         <div className="modal-overlay">
@@ -92,6 +119,15 @@ export default function LoginModal({onClose}) {
                         <button className='btn width-100' type='submit'>로그인</button>
                     </form>
                     {error && (<div className='error'>{error}</div>)}
+                </div>
+                <div className="social-login-buttons">
+  
+                    <button className="kakao-login-btn" onClick={()=>handleSocialLogin('kakao')}>
+                        카카오 로그인
+                    </button>
+                    <button className="naver-login-btn" onClick={()=>handleSocialLogin('naver')}>
+                        네이버 로그인
+                    </button>
                 </div>
             </div>
             {modalType === 'find' && <FindModal onClose={closeModal} />}

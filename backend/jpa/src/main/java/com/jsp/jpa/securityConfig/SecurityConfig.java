@@ -1,10 +1,13 @@
 package com.jsp.jpa.securityConfig;
 
 import com.jsp.jpa.common.JwtTokenProvider;
+import com.jsp.jpa.exception.CustomAuthenticationEntryPoint;
+import com.jsp.jpa.service.auth.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,12 +19,15 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 @Configuration
@@ -32,6 +38,9 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final OAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CustomAuthenticationEntryPoint customOAuth2AuthenticationEntryPoint;
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -45,7 +54,7 @@ public class SecurityConfig {
         return (web)
                 -> web
                 .ignoring()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()); // 정적 리소스들
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());// 정적 리소스들
     }
 
     @Bean
@@ -63,17 +72,34 @@ public class SecurityConfig {
 
                 // 예외 처리
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 인가에 실패했을 때
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            if (authException instanceof OAuth2AuthenticationException) {
+                                customOAuth2AuthenticationEntryPoint.commence(request, response, authException);
+                            } else {
+                                jwtAuthenticationEntryPoint.commence(request, response, authException);
+                            }
+                        })
                         .accessDeniedHandler(jwtAccessDeniedHandler)// 인증에 실패했을 때
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/login/oauth2/code/**", "/oauth2/**","/favicon.ico").permitAll()
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/api/mypage/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
 
                         /*.requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()*/
+                ) // oauth2 설정
+                .oauth2Login(oauth -> oauth// OAuth2 로그인 기능에 대한 여러 설정의 진입점
+                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2/authorization")) // OAuth2 인증 엔드포인트 설정
+                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/*")) // OAuth2 인증 후 리다이렉션 엔드포인트 설정
+                        // OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정을 담당
+                        .userInfoEndpoint(c -> c.userService(oAuth2UserService))
+                        // 로그인 성공 시 핸들러
+                        .successHandler(oAuth2SuccessHandler)
+                        // 실패시 핸들러
+                        .failureHandler(customOAuth2AuthenticationEntryPoint::commence)
                 )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

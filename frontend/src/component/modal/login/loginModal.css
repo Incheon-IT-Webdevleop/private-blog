@@ -144,3 +144,10 @@
   font-size:30pt;
   font-weight: 500;
 }
+
+.social-login-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+

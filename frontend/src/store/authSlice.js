@@ -6,7 +6,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     token: null,
-    isAuthenticated: false,
+    isAuthenticated: false
   },
   reducers: {
     // 토큰과 유저 정보 저장
@@ -43,7 +43,7 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       // 로그아웃을 했으니 로컬 스토리지의 값을 지운다.
       localStorage.setItem('accessToken', action.payload.token); // 토큰 저장
-    },
+    }
   }
 });
 // 함수 내보내기
