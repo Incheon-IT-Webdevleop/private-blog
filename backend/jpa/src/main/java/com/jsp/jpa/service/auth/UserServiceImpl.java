@@ -56,6 +56,18 @@ public class UserServiceImpl implements UserService{
         log.info("user : " + user);
         return user.isPresent();
     }
+    /**
+     * 이메일 중복 검사
+     * 비밀번호 찾기시 일반회원인지 확인하기 위해
+     * @param email
+     * @return
+     */
+    @Override
+    public boolean checkEmailDuplicationByProvider(String email) {
+        Optional<User> user = userRepository.findByUserEmailAndProvider(email,"일반");
+        log.info("user : " + user);
+        return user.isPresent();
+    }
 
     /**
      * 인증번호 보내기
@@ -100,9 +112,14 @@ public class UserServiceImpl implements UserService{
         return false;
     }
 
+    /**
+     * 비밀번호 변경
+     * @param dto
+     * @return
+     */
     @Override
     public boolean changePwd(AuthDto.ChangePwdDto dto) {
-        User user = userRepository.findByUserEmail(dto.getEmail())
+        User user = userRepository.findByUserEmailAndProvider(dto.getEmail(),"일반")
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + dto.getEmail()));
 
         user.changePassword(dto.getPwd());

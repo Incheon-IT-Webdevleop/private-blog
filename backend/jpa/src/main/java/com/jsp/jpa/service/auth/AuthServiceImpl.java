@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService{
         Authentication authentication = authenticationManagerBuilder.getObject()
                 .authenticate(authenticationToken);
 
-        User user = userRepository.findByUserEmail(loginDto.getEmail())
+        User user = userRepository.findByUserEmailAndProvider(loginDto.getEmail(),"일반")
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginDto.getEmail()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
