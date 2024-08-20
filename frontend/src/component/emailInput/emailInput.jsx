@@ -64,7 +64,7 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
             return;
         }
         try {
-            const res = await axios.post('/api/auth/check-email', { email, type }, {
+            const res = await axios.post('/api/auth/check-email', { email }, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

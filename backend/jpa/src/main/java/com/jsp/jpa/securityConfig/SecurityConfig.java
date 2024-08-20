@@ -73,14 +73,8 @@ public class SecurityConfig {
 
                 // 예외 처리
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            if (authException instanceof OAuth2AuthenticationException) {
-                                customOAuth2AuthenticationEntryPoint.commence(request, response, authException);
-                            } else {
-                                jwtAuthenticationEntryPoint.commence(request, response, authException);
-                            }
-                        })
-                        .accessDeniedHandler(jwtAccessDeniedHandler)// 인증에 실패했을 때
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 인증에 실패했을 때
+                        .accessDeniedHandler(jwtAccessDeniedHandler)// 인가에 실패했을 때
                 )
 
                 .authorizeHttpRequests(authorize -> authorize

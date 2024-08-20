@@ -198,6 +198,7 @@ public class AuthApiController {
         }
 
         log.info("email : " + email);
+
         boolean isDuplicate = userService.checkEmailDuplication(email);
         log.info("isDuplicate : " + isDuplicate);
         if (isDuplicate) {
