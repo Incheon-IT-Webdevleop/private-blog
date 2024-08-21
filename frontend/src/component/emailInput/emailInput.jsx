@@ -145,7 +145,7 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
     };
 
     return (
-        <div className="input-container">
+        <div className="input-container email-form">
             <div className="flex gap-10">
                 <input
                     type='email'
@@ -161,7 +161,7 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
                     }}
                 />
                 <label className={`label ${email ? 'shrink' : ''}`} htmlFor="email">이메일</label>
-                <button className='btn btn-width' onClick={(e) => certificationClickHandler(e)}>이메일 인증</button>
+                <button className='btn1 btn-width' onClick={(e) => certificationClickHandler(e)}>이메일 인증</button>
             </div>
             {certificationNumberState && (
                 <div className="flex gap-10">
@@ -174,7 +174,7 @@ export default function EmailInput({email, setEmail, setEmailState, emailError, 
                         placeholder='인증번호'
                         onChange={(e) => changeHandler(e.target.value, "setCertificationNumber")}
                     />
-                    <button className='btn btn-width' onClick={(e) => verifyNumberHandler(e)}>인증 번호 확인</button>
+                    <button className='btn1 btn-width' onClick={(e) => verifyNumberHandler(e)}>인증 번호 확인</button>
                 </div>
             )}
             {certificationNumberState && (

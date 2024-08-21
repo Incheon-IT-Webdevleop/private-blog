@@ -2,6 +2,7 @@ package com.jsp.jpa.vo.user;
 
 import com.jsp.jpa.model.user.User;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails, OAuth2User {
 
+    @Getter
     private final User user;
     private final Map<String, Object> attributes;
 
@@ -41,10 +43,6 @@ public class UserDetailsImpl implements UserDetails, OAuth2User {
     @Override
     public String getPassword() {
         return user.getUserPW();
-    }
-
-    public User getUser() {
-        return user;
     }
 
     // == 세부 설정 == //

@@ -60,7 +60,7 @@ public class OAuth2AuthServiceImpl {
         // 사용자가 존재하지 않으면 새로운 사용자를 생성합니다.
         User newUser = new User(
                 oAuth2UserInfo.getEmail(),
-                "social_user_password_placeholder", // 소셜 로그인 사용자의 경우 실제 비밀번호는 사용하지 않음
+                "password123", // 소셜 로그인 사용자의 경우 실제 비밀번호는 사용하지 않음
                 oAuth2UserInfo.getProvider(), // 네이버, 카카오 등의 소셜 로그인 제공자 정보
                 Role.USER // 기본적으로 USER 역할 부여
         );

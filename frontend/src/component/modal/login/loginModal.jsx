@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './loginModal.css';
 import { useDispatch, useSelector } from 'react-redux';
+import kakaoImg from '../../../assets/img/kakao.png';
+import naverImg from '../../../assets/img/naver.png';
 import axios from 'axios';
 import { initializeUser, setUser } from '../../../store/authSlice';
 import FindModal from '../find/findModal';
@@ -26,7 +28,7 @@ export default function LoginModal({onClose, errorMessage, source}) {
             console.log("Error message received:", errorMessage);  // 에러 메시지 로그 출력
             setError(errorMessage); // 새로운 에러 메시지를 반영
             console.log(error)
-            // localStorage.removeItem("errorMessage");
+            localStorage.removeItem("errorMessage");
         }
     }, [error, source]);
 
@@ -95,7 +97,7 @@ export default function LoginModal({onClose, errorMessage, source}) {
                     <h2>로그인</h2>
                 </div>
                 <div className="input-group">
-                    <form onSubmit={submitHandler}>
+                    <form className='email-form' onSubmit={submitHandler}>
                         <div className="input-container">
                             <input type='email' name='email' className='input1' value={email} id='email'
                                 onChange={(e) => setEmail(e.target.value)} />
@@ -116,18 +118,13 @@ export default function LoginModal({onClose, errorMessage, source}) {
                                 <p className='pointer' onClick={signUpClickHandler}>회원가입</p>
                             </div>
                         </div>
-                        <button className='btn width-100' type='submit'>로그인</button>
+                        <button className='btn1 width-100' style={{height:"40px"}} type='submit'>로그인</button>
                     </form>
                     {error && (<div className='error'>{error}</div>)}
                 </div>
                 <div className="social-login-buttons">
-  
-                    <button className="kakao-login-btn" onClick={()=>handleSocialLogin('kakao')}>
-                        카카오 로그인
-                    </button>
-                    <button className="naver-login-btn" onClick={()=>handleSocialLogin('naver')}>
-                        네이버 로그인
-                    </button>
+                    <SocialLoginButton provider="kakao" imgSrc={kakaoImg} onClick={()=>handleSocialLogin('kakao')}/>
+                    <SocialLoginButton provider="naver" imgSrc={naverImg} onClick={()=>handleSocialLogin('naver')}/>
                 </div>
             </div>
             {modalType === 'find' && <FindModal onClose={closeModal} />}
