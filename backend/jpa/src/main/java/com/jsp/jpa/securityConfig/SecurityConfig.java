@@ -72,8 +72,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/login/oauth2/code/**", "/oauth2/**","/favicon.ico").permitAll().requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/api/auth/my-reviews").authenticated()
                         .requestMatchers("/api/auth//reviews/**").authenticated()
-                        .requestMatchers("/api/auth/diary").authenticated()
-                        .requestMatchers("/api/auth/diary/**").authenticated()
+                        .requestMatchers("/api/auth/diary").hasRole("USER")
+                        .requestMatchers("/api/auth/diary/**").hasRole("USER")
                         .requestMatchers("/api/mypage/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
 
