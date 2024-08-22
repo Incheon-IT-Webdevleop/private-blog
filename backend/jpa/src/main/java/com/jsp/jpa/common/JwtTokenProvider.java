@@ -32,8 +32,8 @@ public class JwtTokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "role";
     private static final String IDX_KEY = "idx";
-    private static final String ID_KEY = "id";
-    private static final String url = "https://localhost:8080";
+    private static final String ID_KEY = "email";
+    private static final String url = "https://localhost:8082";
 
     private final String secretKey;
     private static Key signingKey;
@@ -78,7 +78,7 @@ public class JwtTokenProvider implements InitializingBean {
      * 토큰 발급
      * @param email, authorities
      */
-    public AuthDto.TokenDto createToken(int idx, String authorities, String id){
+    public AuthDto.TokenDto createToken(int idx, String authorities, String email){
         Long now = System.currentTimeMillis();
 
         String accessToken = Jwts.builder()
@@ -88,7 +88,7 @@ public class JwtTokenProvider implements InitializingBean {
                 .setSubject("access-token")
                 .claim(url, true)
                 .claim(IDX_KEY, idx)
-                .claim(ID_KEY,id)
+                .claim(ID_KEY,email)
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(signingKey, SignatureAlgorithm.HS512)
                 .compact();
@@ -131,8 +131,8 @@ public class JwtTokenProvider implements InitializingBean {
      */
     public Authentication getAuthentication(String token) {
         int idx = (int) getClaims(token).get(IDX_KEY);
-        String id = getClaims(token).get(ID_KEY).toString();
-        UserDetailsImpl userDetailsImpl = userDetailsService.loadUserByUsername(id);
+        String email = getClaims(token).get(ID_KEY).toString();
+        UserDetailsImpl userDetailsImpl = userDetailsService.loadUserByUsername(email);
         log.info("Extracted claims from token: {}", idx);
         log.info("Extracted authorities: {}", userDetailsImpl);
         return new UsernamePasswordAuthenticationToken(userDetailsImpl, "", userDetailsImpl.getAuthorities());

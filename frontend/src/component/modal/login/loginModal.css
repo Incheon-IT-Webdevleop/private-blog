@@ -126,7 +126,7 @@
 .p-container{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   font-size: 0.75rem;
   height: 20px;
 }

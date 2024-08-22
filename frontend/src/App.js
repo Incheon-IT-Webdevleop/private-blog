@@ -60,7 +60,7 @@ function App() {
 
   return (
       <Router>
-         <SideBar/>
+         <SideBar setShowLoginModal={setShowLoginModal}/>
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/review" element={<PrivateRoute >

@@ -109,10 +109,6 @@ export default function LoginModal({onClose, errorMessage, source}) {
                             <label className={`label ${password ? 'shrink' : ''}`} htmlFor="password">비밀번호</label>
                         </div>
                         <div className='p-container'>
-                            <div className='remember-container'>
-                                <input type='checkbox' className='remember-me' id='rememberMe'></input>
-                                <label htmlFor='rememberMe'>내 정보 저장</label>
-                            </div>
                             <div className='p-contents'>
                                 <p className='find pointer' onClick={findClickHandler}>비밀번호 찾기</p>
                                 <p className='pointer' onClick={signUpClickHandler}>회원가입</p>
