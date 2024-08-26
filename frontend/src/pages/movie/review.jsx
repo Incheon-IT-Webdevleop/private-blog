@@ -4,6 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import './review.css';
 import AWS from 'aws-sdk';
 import { useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -108,7 +109,7 @@ const MovieReviewEditor = () => {
   
       if (response.ok) {
         console.log('리뷰가 성공적으로 저장되었습니다.');
-        navigate('/movie'); 
+        Navigate('/movie'); 
       } else {
         console.error('리뷰 저장 실패:', response.statusText);
       }
