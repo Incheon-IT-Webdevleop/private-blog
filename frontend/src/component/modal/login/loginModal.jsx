@@ -1,25 +1,36 @@
 import { useEffect, useState } from 'react';
 import './loginModal.css';
 import { useDispatch, useSelector } from 'react-redux';
+import kakaoImg from '../../../assets/img/kakao.png';
+import naverImg from '../../../assets/img/naver.png';
 import axios from 'axios';
 import { initializeUser, setUser } from '../../../store/authSlice';
 import FindModal from '../find/findModal';
 import SignUpModal from '../signup/signupModal';
+import SocialLoginButton from '../../btn/socialLoginBtn';
 
-export default function LoginModal({onClose}) {
+export default function LoginModal({onClose, errorMessage, source}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [error, setError] = useState(errorMessage || '');
     const [modalType, setModalType] = useState(null); // 모달 타입 상태 추가
     const loginedUser = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
-
+    
     useEffect(() => {
         if (loginedUser) {
             onClose(); // 유저 정보가 있을 때 모달 닫기
         }
     }, [loginedUser, onClose]);
     
+    useEffect(() => {
+        if (errorMessage) {
+            console.log("Error message received:", errorMessage);  // 에러 메시지 로그 출력
+            setError(errorMessage); // 새로운 에러 메시지를 반영
+            console.log(error)
+            localStorage.removeItem("errorMessage");
+        }
+    }, [error, source]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -60,15 +71,33 @@ export default function LoginModal({onClose}) {
     const signUpClickHandler = () => setModalType('signup');
     const closeModal = () => setModalType(null);
 
+    const handleSocialLogin = async (provider) => {
+        try {
+            window.location.href = `http://localhost:8082/oauth2/authorization/${provider}`;
+        } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError(`${provider.charAt(0).toUpperCase() + provider.slice(1)} 로그인 중 오류가 발생했습니다.`);
+            }
+            console.error(`${provider} login error:`, error);
+        }
+    };
+
+
+
+    
+
+
     return (
         
         <div className="modal-overlay">
             <div className="modal-content">
-                <div className='title'>
+                <div className='title1'>
                     <h2>로그인</h2>
                 </div>
                 <div className="input-group">
-                    <form onSubmit={submitHandler}>
+                    <form className='email-form' onSubmit={submitHandler}>
                         <div className="input-container">
                             <input type='email' name='email' className='input1' value={email} id='email'
                                 onChange={(e) => setEmail(e.target.value)} />
@@ -80,18 +109,18 @@ export default function LoginModal({onClose}) {
                             <label className={`label ${password ? 'shrink' : ''}`} htmlFor="password">비밀번호</label>
                         </div>
                         <div className='p-container'>
-                            <div className='remember-container'>
-                                <input type='checkbox' className='remember-me' id='rememberMe'></input>
-                                <label htmlFor='rememberMe'>내 정보 저장</label>
-                            </div>
                             <div className='p-contents'>
                                 <p className='find pointer' onClick={findClickHandler}>비밀번호 찾기</p>
                                 <p className='pointer' onClick={signUpClickHandler}>회원가입</p>
                             </div>
                         </div>
-                        <button className='btn width-100' type='submit'>로그인</button>
+                        <button className='btn1 width-100' style={{height:"40px"}} type='submit'>로그인</button>
                     </form>
                     {error && (<div className='error'>{error}</div>)}
+                </div>
+                <div className="social-login-buttons">
+                    <SocialLoginButton provider="kakao" imgSrc={kakaoImg} onClick={()=>handleSocialLogin('kakao')}/>
+                    <SocialLoginButton provider="naver" imgSrc={naverImg} onClick={()=>handleSocialLogin('naver')}/>
                 </div>
             </div>
             {modalType === 'find' && <FindModal onClose={closeModal} />}

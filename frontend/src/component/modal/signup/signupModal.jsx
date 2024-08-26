@@ -80,7 +80,7 @@ export default function SignUpModal({ onClose }) {
                 <SignupTitle title={"회원가입"} onClose={onClose}/>
                 
                 <div className="input-group">
-                    <form onSubmit={submitHandler}>
+                    <form className='email-form' onSubmit={submitHandler}>
                         <EmailInput
                             email={email}
                             setEmail={setEmail}
@@ -123,7 +123,7 @@ export default function SignUpModal({ onClose }) {
                         {checkPwdError && <Error props={checkPwdError} />}
                         {error && <Error props={error} />}
                         
-                        <button className='btn width-100' type='submit'>회원가입</button>
+                        <button className='btn1 width-100' type='submit'>회원가입</button>
                     </form>
                 </div>
             </div>

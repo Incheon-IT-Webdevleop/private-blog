@@ -4,6 +4,7 @@ import com.jsp.jpa.common.Role;
 import com.jsp.jpa.dto.auth.AuthDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -32,6 +33,7 @@ public class User {
     @Column(name = "member_role")
     private Role role; // 사용자 권한
 
+
     // == 생성 메서드 == //
     public static User registerUser(AuthDto.SignupDto signupDto) {
         User user = new User();
@@ -41,6 +43,14 @@ public class User {
         user.provider = signupDto.getProvider() != null ? signupDto.getProvider() : "일반";
         user.role = Role.USER;
         return user;
+    }
+
+    @Builder
+    public User(String email, String pwd, String provider, Role role){
+        this.userEmail = email;
+        this.userPW = pwd;
+        this.provider = provider;
+        this.role = role;
     }
 
     public void changePassword(String encodedPassword) {

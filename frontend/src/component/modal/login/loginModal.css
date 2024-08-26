@@ -48,13 +48,13 @@
   min-width: 400px;
 }
 
-.title{
+.title1{
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.btn{
+.btn1{
   border: none;
   background-color: #ccc;
   padding: 0.5rem;
@@ -71,10 +71,18 @@
   width: 200px;
 }
 
+.input-group{
+  display: flex;
+  flex-direction: column;
+}
+
 .input-container {
   position: relative;
-  margin-bottom: 10px;
-  margin-top: 10px;
+}
+.email-form{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .input1 {
@@ -118,13 +126,19 @@
 .p-container{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   font-size: 0.75rem;
+  height: 20px;
 }
 
 .p-contents{
   display: flex;
   gap: 5px;
+}
+
+.remember-container{
+  display: flex;
+  align-items: center;
 }
 
 .find::after{
@@ -144,3 +158,11 @@
   font-size:30pt;
   font-weight: 500;
 }
+
+.social-login-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+}
+

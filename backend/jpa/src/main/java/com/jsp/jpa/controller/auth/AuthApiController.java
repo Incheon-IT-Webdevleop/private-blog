@@ -191,11 +191,14 @@ public class AuthApiController {
     @PostMapping("/check-email")
     public ResponseEntity<?> checkEmail( @RequestBody @Valid Map<String, String> request, BindingResult result){
         String email = request.get("email");
+        String type = request.get("type");
+        log.info("type : " + type);
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
 
         log.info("email : " + email);
+
         boolean isDuplicate = userService.checkEmailDuplication(email);
         log.info("isDuplicate : " + isDuplicate);
         if (isDuplicate) {
@@ -213,6 +216,8 @@ public class AuthApiController {
     @PostMapping("/verify-email")
     public ResponseEntity<?> sendVerifyCode(@RequestBody SendCertificationEmailRequest request){
         String email = request.getUserEmail();
+        log.info("type : " + request.getType());
+        
         if (email == null || email.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid email address");
         }

@@ -12,6 +12,7 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+//AuthenticationEntryPoint 인터페이스 : 인증 실패 시 동작하도록 시큐리티 설정파일 작성 시 지정, 상속을 통해 구현
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override

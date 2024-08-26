@@ -20,6 +20,8 @@ import Movie from './pages/movie/movie';
 import SideBar from './pages/sidebar/sidebar';
 import Review from './pages/movie/review';
 import LoginModal from './component/modal/login/loginModal';
+import OAuth2RedirectHandler from './component/oauth2/OAuth2RedirectHandler';
+
 import MovieDetail from './pages/movie/movieDetail';
 
 
@@ -28,6 +30,7 @@ function App() {
   const dispatch = useDispatch();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const user = useSelector(state => state.auth.user);
+  const [errorMessage, setErrorMessage] = useState(""); // 추가된 상태
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -52,11 +55,12 @@ function App() {
 
   const closeLoginModal = () => {
     setShowLoginModal(false);
+    setErrorMessage(""); // 에러 메시지 초기화
   };
 
   return (
       <Router>
-         <SideBar/>
+         <SideBar setShowLoginModal={setShowLoginModal}/>
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/review" element={<PrivateRoute >
@@ -68,7 +72,8 @@ function App() {
           
           
           <Route path="/movie" element={<Movie />} />
-         
+          <Route path="/oauth2/redirect" 
+          element={<OAuth2RedirectHandler setShowLoginModal={setShowLoginModal} setErrorMessage={setErrorMessage} />}  />
           <Route 
             path='/mypage' 
             element={
@@ -83,7 +88,7 @@ function App() {
           <Route path='/diary' element={<PrivateRoute><Diary /></PrivateRoute>} />
           <Route path='/diaryadd' element={<PrivateRoute><DiaryAdd /></PrivateRoute>} />
         </Routes>
-        {showLoginModal && <LoginModal onClose={closeLoginModal} />} {/* 로그인 모달 추가 */}
+        {showLoginModal && <LoginModal source="manual" errorMessage={errorMessage} onClose={closeLoginModal} />} {/* 로그인 모달 추가 */}
       </Router>
   );
 }

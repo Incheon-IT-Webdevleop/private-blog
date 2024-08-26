@@ -24,6 +24,7 @@ import java.util.Date;
 @Transactional(readOnly = true)
 //Secret Key 값을 사용하기 전 미리 초기화하기 위해
 //InitializingBean 인터페이스를 상속받고 afterPropertiesSet메서드를 오버라이딩해 사용하겠다.
+//TokenProvider : 토큰을 생성하고 검증하며 토큰에서 정보를 꺼내 스프링 시큐리티 Authentication 객체를 생성하는 역할을 수행
 public class JwtTokenProvider implements InitializingBean {
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -31,8 +32,8 @@ public class JwtTokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "role";
     private static final String IDX_KEY = "idx";
-    private static final String ID_KEY = "id";
-    private static final String url = "https://localhost:8080";
+    private static final String ID_KEY = "email";
+    private static final String url = "https://localhost:8082";
 
     private final String secretKey;
     private static Key signingKey;
@@ -77,7 +78,7 @@ public class JwtTokenProvider implements InitializingBean {
      * 토큰 발급
      * @param email, authorities
      */
-    public AuthDto.TokenDto createToken(int idx, String authorities, String id){
+    public AuthDto.TokenDto createToken(int idx, String authorities, String email){
         Long now = System.currentTimeMillis();
 
         String accessToken = Jwts.builder()
@@ -87,7 +88,7 @@ public class JwtTokenProvider implements InitializingBean {
                 .setSubject("access-token")
                 .claim(url, true)
                 .claim(IDX_KEY, idx)
-                .claim(ID_KEY,id)
+                .claim(ID_KEY,email)
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(signingKey, SignatureAlgorithm.HS512)
                 .compact();
@@ -130,8 +131,8 @@ public class JwtTokenProvider implements InitializingBean {
      */
     public Authentication getAuthentication(String token) {
         int idx = (int) getClaims(token).get(IDX_KEY);
-        String id = getClaims(token).get(ID_KEY).toString();
-        UserDetailsImpl userDetailsImpl = userDetailsService.loadUserByUsername(id);
+        String email = getClaims(token).get(ID_KEY).toString();
+        UserDetailsImpl userDetailsImpl = userDetailsService.loadUserByUsername(email);
         log.info("Extracted claims from token: {}", idx);
         log.info("Extracted authorities: {}", userDetailsImpl);
         return new UsernamePasswordAuthenticationToken(userDetailsImpl, "", userDetailsImpl.getAuthorities());

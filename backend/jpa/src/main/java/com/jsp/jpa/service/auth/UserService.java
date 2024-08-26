@@ -24,6 +24,13 @@ public interface UserService {
     boolean checkEmailDuplication(String email);
 
     /**
+     * 비밀번호 찾기 시 일반회원인지 탐색하기 위해
+     * @param email
+     * @return
+     */
+    public boolean checkEmailDuplicationByProvider(String email);
+
+    /**
      * 인증번호 보내기
      * @param userEmail
      */
