@@ -94,7 +94,7 @@ export default function ChangePwd( {onClose, email} ){
                         </div> 
                         {error && <Error props={error} />}
                         
-                        <button className='btn width-100' type='submit'>변경</button>
+                        <button className='btn1 width-100' type='submit'>변경</button>
                     </form>
                 </div>
             </div>
