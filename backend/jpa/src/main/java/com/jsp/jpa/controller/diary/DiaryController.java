@@ -1,14 +1,13 @@
 package com.jsp.jpa.controller.diary;
 
+import com.jsp.jpa.dto.diary.DiaryDto;
 import com.jsp.jpa.model.diary.Diary;
 import com.jsp.jpa.repository.diary.DiaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/auth")
 public class DiaryController {
     @Autowired
@@ -20,9 +19,8 @@ public class DiaryController {
         return diaryRepository.save(diary);
     }
 
-    @GetMapping("/diary")
-    public Diary diaryselect(@RequestBody Diary diary, @PathVariable("user_idx") int idx, Model model){
-        System.out.print(idx);
-        return null;
+    @PostMapping("/my-diary")
+    public List<Diary> getMyDiary(@RequestBody DiaryDto request) {
+        return diaryRepository.findByMemberIdx(request.getMemberIdx());
     }
 }

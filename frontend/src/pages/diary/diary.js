@@ -10,82 +10,87 @@ import axios from '../../api/axiosConfig';
 
 function Diary() {
   const [value, setValue] = useState(new Date()); // 초기값은 현재 날짜
+  const [selectedDiary, setSelectedDiary] = useState(null); // 선택된 날짜의 일기 데이터
   const token = useSelector((state) => state.auth.token);
   const user = useSelector(state => state.auth.user);
-  const [diary_date, setDiary_date] = useState();
-  const [diary_emoji, setDiary_emoji] = useState();
-  const [diary_title, setDiary_title] = useState();
-  const [diary_content, setDiary_content] = useState();
-
+  const [diaryData, setDiaryData] = useState([]);
   const navigate = useNavigate();
   
-  const user_idx = user.idx;
+  const userId = user.idx;
 
-  useEffect(()=>{
-    getUser();
-  },[token]);
-     
+  const emojiList = [
+    'https://cdn-icons-png.flaticon.com/128/983/983018.png',  // 1번 이모지
+    'https://cdn-icons-png.flaticon.com/128/983/983031.png',  // 2번 이모지
+    'https://cdn-icons-png.flaticon.com/128/982/982995.png',  // 3번 이모지
+    'https://cdn-icons-png.flaticon.com/128/983/983005.png',  // 4번 이모지
+    'https://cdn-icons-png.flaticon.com/128/983/983022.png'   // 5번 이모지
+  ];
 
-// 유저 정보 찾기
-const getUser = async (token) => {
-  if(token === null){
-    return;
-  }
-  try{
-    const response = await axios.get('/api/auth/diary', user_idx, {
-      headers: {
-        // 토큰은 기본적으로 헤더에 Authorization이라는 이름으로
-        // 토큰앞에 `Bearer `을 붙혀서 보내줘야한다
-        'Authorization': `Bearer ${token}`
-      },
-      withCredentials: true
-    });
-    if (response.status === 200){
-      const user = response.data;
-      return user;
+  useEffect(() => {
+    if (userId !== null && token) {
+        axios.post('/api/auth/my-diary', { memberIdx: userId }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          setDiaryData(response.data); // 이모지 번호 포함한 일기 데이터를 저장
+        })
+        .catch(error => {
+            console.error("There was an error fetching the diary data!", error);
+        });
+    } else {
+        console.error("User ID or token is null or undefined");
     }
-  }catch(error){
-    return null;
-  }
-}
+  }, [userId, token]);
 
-console.log(token);
-
-  const onChange =(date) =>{
+  const onChange = (date) => {
     setValue(date);
-    // handeSelect(date);
-    
-  }
-  const onClcik = () => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    const diaryEntry = diaryData.find(diary => moment(diary.diaryDate).format('YYYY-MM-DD') === formattedDate);
+    setSelectedDiary(diaryEntry || null); // 선택된 날짜의 일기 데이터를 상태에 저장
+  };
+
+  const onClick = () => {
     navigate("/diaryadd");
   };
 
-  // 일기 작성 날짜 리스트
-  const dayList = [
-    '2024-08-05',
-    '2024-08-07'
-  ];
-
-  // 각 날짜 타일에 컨텐츠 추가
+  // 각 날짜 타일에 이모지 추가
   const addContent = ({ date }) => {
-    // 해당 날짜(하루)에 추가할 컨텐츠의 배열
-    const contents = [];
+    const formattedDate = moment(date).format('YYYY-MM-DD');
 
-    // date(각 날짜)가  리스트의 날짜와 일치하면 해당 컨텐츠(이모티콘) 추가
-    if (dayList.find((day) => day === moment(date).format('YYYY-MM-DD'))) {
-      contents.push(
-        <>
-          <img className="diaryImg" src="https://cdn-icons-png.flaticon.com/128/983/983048.png"></img>
-        </>
+    // 해당 날짜에 해당하는 일기 데이터를 찾음
+    const diaryEntry = diaryData.find(diary => {
+      const diaryDate = moment(diary.diaryDate).format('YYYY-MM-DD');
+      return diaryDate === formattedDate;
+    });
+
+    // 일기가 존재하고, diaryEmoji가 1~5 사이인 경우에만 이모지를 표시
+    if (diaryEntry && diaryEntry.diaryEmoji > 0 && diaryEntry.diaryEmoji <= 5) {
+      const emojiIndex = diaryEntry.diaryEmoji - 1; // 이모지 번호는 1부터 시작하므로 인덱스는 0부터 시작해야 함
+      const emojiUrl = emojiList[emojiIndex];
+
+      return (
+        <div>
+          <img 
+            className="diaryImg" 
+            src={emojiUrl} 
+            alt={`diary emoji ${diaryEntry.diaryEmoji}`} 
+            style={{width: '20px', height: '20px', display: 'block'}} 
+          />
+        </div>
       );
     }
-    return <div>{contents}</div>; // 각 날짜마다 해당 요소가 들어감
+
+    return null;
   };
-  
+
   return (
     <div className='container'>
       
-      <button onClick={onClcik} className="add_btn">일정추가</button>
+      <button onClick={onClick} className="add_btn">일기추가</button>
+
       <div className='test2'>
         <Calendar 
           onChange={onChange} // 선택에 따라 value 변경하는 함수(setValue의 역할)
@@ -97,11 +102,10 @@ console.log(token);
           formatDay={(locale, date) => moment(date).format("D")} // '일'자 생략
         />
         <div className='test'>
-            {/* {moment(value).format("YYYY년 MM월 DD일")}  */}
-            <Modal date={value}/>
+            <Modal date={value} diary={selectedDiary}/> {/* 선택된 날짜와 일기 데이터를 모듈로 전달 */}
         </div>
       </div>
-
+        
     </div>
   );
 }
