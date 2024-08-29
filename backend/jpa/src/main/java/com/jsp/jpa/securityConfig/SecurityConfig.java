@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .formLogin(FormLoginConfigurer::disable)// JWT를 사용하기 때문에 꺼둠
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(sessionManagement ->
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ) // JWT를 사용하기 때문에 세션을 꺼둠
 
                 // 예외 처리
@@ -68,11 +68,11 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/auth/my-reviews").authenticated()
-                        .requestMatchers("/api/auth//reviews/**").authenticated()
-                        .requestMatchers("/api/mypage/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated()
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/api/auth/my-reviews").authenticated()
+                            .requestMatchers("/api/auth/reviews/**").authenticated()
+                            .requestMatchers("/api/mypage/**").hasAnyRole("USER", "ADMIN")
+                            .anyRequest().authenticated()
 
                         /*.requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()*/

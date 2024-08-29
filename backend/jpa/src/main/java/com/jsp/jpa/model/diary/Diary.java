@@ -11,22 +11,22 @@ public class Diary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diary_idx")
-    private int diary_idx;
+    private int diaryIdx;
 
     @Column(name = "member_idx")
-    private int member_idx;
+    private int memberIdx;
 
     @Column(name = "diary_date")
-    private Date diary_date;
+    private Date diaryDate;
 
     @Column(name = "diary_emoji")
-    private int diary_emoji;
+    private int diaryEmoji;
 
     @Column(name = "diary_title")
-    private String diary_title;
+    private String diaryTitle;
 
     @Column(name = "diary_content")
-    private String diary_content;
+    private String diaryContent;
 
 
 }

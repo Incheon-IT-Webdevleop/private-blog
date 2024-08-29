@@ -101,17 +101,18 @@ const DiaryAdd = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(Data),
       });
       
       navigate('/diary')
-      // if (response.ok) {
-      //   console.log('리뷰가 성공적으로 저장되었습니다.');
+      if (response.ok) {
+        console.log('리뷰가 성공적으로 저장되었습니다.');
 
-      // } else {
-      //   console.error('리뷰 저장 실패:', response.statusText);
-      // }
+      } else {
+        console.error('리뷰 저장 실패:', response.statusText);
+      }
     } catch (error) {
       console.error('서버 오류:', error);
     }
