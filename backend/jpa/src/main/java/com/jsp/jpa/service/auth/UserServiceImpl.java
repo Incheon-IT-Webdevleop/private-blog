@@ -95,8 +95,10 @@ public class UserServiceImpl implements UserService{
 
 
     /**
-     * 인증번호 확인
-     * @paran userEmail, 입력한 인증번호
+     *  서비스
+     * @param userEmail
+     * @param certificationNumber
+     * @return
      */
     @Override
     public boolean verifyEmail(String userEmail, String certificationNumber) {
@@ -136,7 +138,9 @@ public class UserServiceImpl implements UserService{
         message.setSubject("회원가입 인증 메일");
         message.setText("인증번호 : " + certificationNumber);
         mailSender.send(message);
+
     }
+
 
 
 }
